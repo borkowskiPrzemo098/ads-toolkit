@@ -54,11 +54,17 @@ export function parseKeywordTable(text: string): ParsedTable {
   }
 }
 
-/** Values of one column below the header. Totals rows from Google Ads exports are skipped. */
-export function keywordColumnValues(table: ParsedTable, column: number): string[] {
+/** Google Ads exports end with "Total: …" / "Razem: …" summary rows. */
+export const isTotalsCell = (value: string) =>
+  /^(total|razem|suma|łącznie)\b/i.test(value.trim())
+
+/** Data rows below the header, totals rows skipped. */
+export function dataRows(table: ParsedTable, column: number): string[][] {
   const start = table.headerRow === null ? 0 : table.headerRow + 1
-  return table.rows
-    .slice(start)
-    .map((row) => row[column] ?? "")
-    .filter((value) => !/^(total|razem|suma|łącznie)\b/i.test(value.trim()))
+  return table.rows.slice(start).filter((row) => !isTotalsCell(row[column] ?? ""))
+}
+
+/** Values of one column below the header. */
+export function keywordColumnValues(table: ParsedTable, column: number): string[] {
+  return dataRows(table, column).map((row) => row[column] ?? "")
 }

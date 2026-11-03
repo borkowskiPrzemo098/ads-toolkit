@@ -40,6 +40,10 @@ describe("stemming and near-duplicate keys", () => {
     ["butów", "but"],
     ["damskie", "damsk"],
     ["damskich", "damsk"],
+    ["obuwniczy", "obuwnicz"],
+    ["obuwniczym", "obuwnicz"],
+    ["tanim", "tan"],
+    ["klientowi", "klient"],
     ["iphone15", "iphone15"],
     ["kot", "kot"],
   ])("stem(%j) = %j", (word, expected) => {

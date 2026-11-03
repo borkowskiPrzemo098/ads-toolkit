@@ -51,6 +51,7 @@ lib/
   pdf/                  raport tabelaryczny jsPDF z czcionką Geist (polskie znaki)
   csv/                  odczyt plików (BOM, UTF-16, limit 5 MB) i import CSV
   keywords/             normalizacja, polski stemmer, słowniki sygnałów, filtrowanie
+  negatives/            słowniki sugestii wykluczeń (darmowe, praca, używane…)
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -73,6 +74,9 @@ tests/unit/             testy Vitest
   frazie (`lib/keywords/signals.ts`), zawsze opisane w UI jako sugestie. Każda fraza z
   wejścia ma wiersz w wyniku i w eksporcie CSV; puste wiersze i nadmiar ponad limit są
   raportowane.
+- Generator wykluczeń: żadna sugestia nie trafia na listę ani do eksportu bez kliknięcia
+  „Wyklucz”. Masowa akceptacja pomija sugestie z konwersjami. Eksportujemy każdą formę
+  słowa (wykluczenia nie obejmują odmian); dopasowanie ścisłe eksportuje całe hasła.
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -86,6 +90,7 @@ tests/unit/             testy Vitest
 | 2    | Kalkulator rentowności       | gotowy       |
 | 3    | Planer budżetu               | gotowy       |
 | 4    | Analizator słów kluczowych   | gotowy       |
-| 5–9  | Pozostałe narzędzia          | do zrobienia |
+| 5    | Generator wykluczeń          | gotowy       |
+| 6–9  | Pozostałe narzędzia          | do zrobienia |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |

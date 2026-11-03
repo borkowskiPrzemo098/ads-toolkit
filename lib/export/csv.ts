@@ -2,7 +2,8 @@ export type CsvCell = string | number | null | undefined
 
 /** Semicolon + comma decimals: what Excel expects in the Polish locale. */
 const SEPARATOR = ";"
-const BOM = "﻿"
+// Byte-order mark: tells Excel the file is UTF-8 (Polish characters).
+const BOM = String.fromCharCode(0xfeff)
 
 /** Characters that make spreadsheet apps treat a cell as a formula. */
 const FORMULA_PREFIX = /^[=+\-@\t\r]/
@@ -15,7 +16,9 @@ export function guardFormula(text: string): string {
   return FORMULA_PREFIX.test(text) ? `'${text}` : text
 }
 
+/** Whole numbers stay whole (counts, clicks); others get two decimals with a comma. */
 export function formatCsvNumber(value: number, digits = 2): string {
+  if (Number.isInteger(value)) return String(value)
   return value.toFixed(digits).replace(".", ",")
 }
 

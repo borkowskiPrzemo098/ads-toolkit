@@ -6,6 +6,7 @@ import { profitabilityCsvRows, profitabilityReport } from "@/lib/export/profitab
 import { profitabilityNotes, profitabilityVerdict } from "@/lib/export/profitability-text"
 import { formatDelta } from "@/lib/formatting/metric"
 
+const BOM = String.fromCharCode(0xfeff)
 const nbsp = (s: string) => s.replace(/[  ]/g, " ")
 
 describe("CSV", () => {
@@ -15,7 +16,7 @@ describe("CSV", () => {
         ["a", 1.5],
         ["b", -2],
       ])
-    ).toBe("﻿a;1,50\r\nb;-2,00")
+    ).toBe(BOM + "a;1,50\r\nb;-2")
   })
 
   it.each([
@@ -30,15 +31,19 @@ describe("CSV", () => {
   })
 
   it("does not guard negative numbers it formats itself", () => {
-    expect(toCsv([[-1100]])).toBe("﻿-1100,00")
+    expect(toCsv([[-1100.5]])).toBe(BOM + "-1100,50")
+    // Whole numbers (counts, clicks) export without decimals.
+    expect(toCsv([[-1100]])).toBe(BOM + "-1100")
   })
 
   it("quotes cells with separators, quotes and newlines", () => {
-    expect(toCsv([['Kampania "A"; test', "x\ny"]])).toBe('﻿"Kampania ""A""; test";"x\ny"')
+    expect(toCsv([['Kampania "A"; test', "x\ny"]])).toBe(
+      BOM + '"Kampania ""A""; test";"x\ny"'
+    )
   })
 
   it("renders empty cells for null", () => {
-    expect(toCsv([[null, undefined, "x"]])).toBe("﻿;;x")
+    expect(toCsv([[null, undefined, "x"]])).toBe(BOM + ";;x")
   })
 })
 
