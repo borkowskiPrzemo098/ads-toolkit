@@ -27,8 +27,8 @@ npm run dev        # http://localhost:3000
 ## Stos
 
 Next.js 16 (App Router, Cache Components), React 19, TypeScript, Tailwind CSS 4,
-shadcn/ui (styl `base-nova`, prymitywy Base UI), Lucide, Vitest, jsPDF (ładowany na żądanie), Recharts.
-PapaParse, Zod i date-fns dochodzą w etapach, które ich wymagają.
+shadcn/ui (styl `base-nova`, prymitywy Base UI), Lucide, Vitest, jsPDF (ładowany na żądanie), Recharts, PapaParse.
+Zod i date-fns dochodzą w etapach, które ich wymagają.
 
 ## Struktura
 
@@ -49,7 +49,8 @@ lib/
   validators/           walidacja formularzy: wspólne parseNumericForm + reguły narzędzi
   export/               CSV (ochrona przed formułami), pobieranie, modele raportów
   pdf/                  raport tabelaryczny jsPDF z czcionką Geist (polskie znaki)
-  csv/                  import CSV (etap 4 i 9)
+  csv/                  odczyt plików (BOM, UTF-16, limit 5 MB) i import CSV
+  keywords/             normalizacja, polski stemmer, słowniki sygnałów, filtrowanie
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -68,6 +69,10 @@ tests/unit/             testy Vitest
   i wzrostu CPC przy większym budżecie są jawne i edytowalne.
 - Kolory serii na wykresach sprawdzone walidatorem palety (daltonizm, kontrast); linie
   scenariuszy mają też różny wzór kreski.
+- Analizator słów kluczowych: kategorie i intencje to heurystyki na podstawie słów we
+  frazie (`lib/keywords/signals.ts`), zawsze opisane w UI jako sugestie. Każda fraza z
+  wejścia ma wiersz w wyniku i w eksporcie CSV; puste wiersze i nadmiar ponad limit są
+  raportowane.
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -80,6 +85,7 @@ tests/unit/             testy Vitest
 | 1    | Design system i panel główny | gotowy       |
 | 2    | Kalkulator rentowności       | gotowy       |
 | 3    | Planer budżetu               | gotowy       |
-| 4–9  | Pozostałe narzędzia          | do zrobienia |
+| 4    | Analizator słów kluczowych   | gotowy       |
+| 5–9  | Pozostałe narzędzia          | do zrobienia |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |

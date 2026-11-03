@@ -56,6 +56,7 @@ export const TOOLS: ToolMeta[] = [
   {
     slug: "keyword-analyzer",
     name: "Analizator słów kluczowych",
+    navLabel: "Słowa kluczowe",
     description: "Porządkuje długie listy fraz: duplikaty, grupy, intencja.",
     question: "Co jest w mojej liście słów kluczowych?",
     icon: ListTree,
