@@ -38,7 +38,9 @@ export function MobileResultBar({ label, value, tone, targetId }: MobileResultBa
     >
       <span className="flex min-w-0 flex-col">
         <span className="text-xs text-muted-foreground">{label}</span>
+        {/* Full value is in the results below; here it may be cut. */}
         <span
+          data-truncate-ok
           className={cn(
             "truncate text-lg font-semibold tabular",
             tone === "good" && "text-success",

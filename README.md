@@ -37,6 +37,11 @@ zainstaluj przeglądarki: `npx playwright install chromium webkit firefox`.
 - `smoke.spec.ts` (tag `@smoke`): każda trasa w Chromium, Pixel 7, WebKit i Firefox:
   nagłówek, tytuł, brak poziomego przewijania, axe WCAG 2.1 AA (błędy serious/critical),
   brak błędów konsoli, nawigacja, strona 404.
+- `responsive.spec.ts` (tag `@responsive`, Chromium i WebKit): każda strona, pusta i
+  wypełniona dużymi liczbami, na 6 szerokościach (320, 390, telefon poziomo, 768, 1024,
+  1440). Błąd przy poziomym przewijaniu strony, elementach poza ekranem, uciętym
+  tekście, tekście poniżej 11 px i polach dotyku poniżej 24×24 px (`layout-audit.ts`).
+  Celowe wyjątki oznacza się w kodzie: `data-truncate-ok`, dekoracje `aria-hidden`.
 - `tools.spec.ts` (Chromium): jeden pełny scenariusz na narzędzie z wartościami
   sprawdzonymi w testach jednostkowych, zakończony eksportem (CSV, TXT, PDF). Po każdym
   scenariuszu ponowny audyt axe z wynikami na ekranie i brak błędów konsoli (wyłapuje też

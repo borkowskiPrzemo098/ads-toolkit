@@ -32,6 +32,6 @@ export default defineConfig({
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] }, grep: /@smoke/ },
     { name: "firefox", use: { ...devices["Desktop Firefox"] }, grep: /@smoke/ },
-    { name: "webkit", use: { ...devices["Desktop Safari"] }, grep: /@smoke/ },
+    { name: "webkit", use: { ...devices["Desktop Safari"] }, grep: /@smoke|@responsive/ },
   ],
 })

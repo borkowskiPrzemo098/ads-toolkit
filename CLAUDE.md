@@ -28,8 +28,8 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
 7. Nie instaluj bibliotek, zanim etap ich nie wymaga.
 8. Po każdym etapie: `npm run check` i `npm run test:e2e`, podgląd desktop + telefon,
    aktualizacja README, podsumowanie zrobionego i otwartych problemów.
-9. Nowe narzędzie lub widok: dopisz trasę do `tests/e2e/smoke.spec.ts` i scenariusz do
-   `tools.spec.ts`. Wykresy importuj z `components/charts/lazy`, szerokie tabele owijaj
+9. Nowe narzędzie lub widok: dopisz trasę do `tests/e2e/smoke.spec.ts`, scenariusz do
+   `tools.spec.ts` i stan wypełniony do `responsive.spec.ts`. Wykresy importuj z `components/charts/lazy`, szerokie tabele owijaj
    w `TableScroll`. Nowe zasoby zewnętrzne wymagają zmiany CSP w `app/layout.tsx`.
 10. Aplikacja to statyczny eksport pod `/ads-toolkit/` (GitHub Pages). Bez Route Handlers
     z danymi, bez `cookies()`/`headers()`, bez Cache Components. Linki przez `next/link`,
