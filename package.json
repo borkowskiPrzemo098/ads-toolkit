@@ -15,7 +15,7 @@
     "check": "npm run typecheck && npm run lint && npm run test",
     "build:pages": "node scripts/build-pages.mjs",
     "test:e2e": "npm run build:pages && playwright test",
-    "deploy": "npm run test:e2e && node scripts/deploy-pages.mjs"
+    "deploy": "npm run test:e2e -- --project=chromium --project=mobile --project=webkit && node scripts/deploy-pages.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",

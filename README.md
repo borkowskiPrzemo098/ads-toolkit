@@ -49,7 +49,8 @@ Znany problem: na stacji, na której powstał projekt, Playwright nie uruchamia 
 
 - Hosting: GitHub Pages, repozytorium `borkowskiPrzemo098/ads-toolkit`, HTTPS z
   certyfikatem GitHub. Adresy, wersja i data dokumentów prawnych: `constants/site.ts`.
-- Publikacja: `npm run deploy` buduje stronę, uruchamia testy E2E i dopiero po ich
+- Publikacja: `npm run deploy` buduje stronę, uruchamia testy E2E (Chromium, Pixel 7,
+  WebKit; Firefox lokalnie się nie uruchamia) i dopiero po ich
   przejściu wypycha `out/` na gałąź `gh-pages` (Pages: „Deploy from a branch”).
   `public/.nojekyll` wyłącza Jekylla, który pomijałby katalog `_next`.
 - CI (nieaktywne): `docs/ci/pages.yml` uruchamia check i E2E na Chromium, Pixel 7,
