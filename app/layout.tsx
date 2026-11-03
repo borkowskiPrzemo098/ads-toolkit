@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google"
 import { AppSidebar } from "@/components/layout/app-sidebar"
 import { MobileHeader } from "@/components/layout/mobile-header"
 import { SiteFooter } from "@/components/layout/site-footer"
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/constants/site"
 import "./globals.css"
 
 // latin-ext carries Polish diacritics (ą, ę, ł, ś, ż…).
@@ -16,12 +17,20 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL(new URL(SITE_URL).origin),
   title: {
     default: "Ads Toolkit: kalkulatory i raporty Google Ads",
     template: "%s · Ads Toolkit",
   },
-  description:
-    "Osiem narzędzi do kampanii Google Ads: rentowność, budżet, słowa kluczowe, wykluczenia, UTM, reklamy RSA, testy A/B i raporty PPC. Bez logowania, dane zostają w przeglądarce.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    locale: "pl_PL",
+    siteName: SITE_NAME,
+  },
+  twitter: { card: "summary_large_image" },
+  formatDetection: { telephone: false },
 }
 
 export const viewport: Viewport = {

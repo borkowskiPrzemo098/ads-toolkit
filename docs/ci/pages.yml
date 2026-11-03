@@ -1,0 +1,57 @@
+# NOT ACTIVE: move to .github/workflows/ after `gh auth refresh -h github.com -s workflow`
+# and switch Settings → Pages → Source to "GitHub Actions" (README → Publikacja).
+#
+# Tests the app and publishes the static export to GitHub Pages on every push to main.
+# Nothing is deployed unless typecheck, lint, unit tests and E2E (4 engines) pass.
+name: Testy i publikacja
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PAGES_BASE_PATH: /ads-toolkit
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Build (GitHub Pages) + E2E
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: out
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

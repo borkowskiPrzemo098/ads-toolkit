@@ -31,6 +31,11 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
 9. Nowe narzędzie lub widok: dopisz trasę do `tests/e2e/smoke.spec.ts` i scenariusz do
    `tools.spec.ts`. Wykresy importuj z `components/charts/lazy`, szerokie tabele owijaj
    w `TableScroll`. Nowe zasoby zewnętrzne wymagają zmiany CSP w `app/layout.tsx`.
+10. Aplikacja to statyczny eksport pod `/ads-toolkit/` (GitHub Pages). Bez Route Handlers
+    z danymi, bez `cookies()`/`headers()`, bez Cache Components. Linki przez `next/link`,
+    ręcznie składane adresy zasobów z `NEXT_PUBLIC_BASE_PATH`. Nowa strona: `metadata`
+    z `alternates.canonical: pageUrl(...)`, wpis w `app/sitemap.ts` i w smoke E2E.
+    Publikacja: `npm run deploy` (testy E2E, potem push `out/` na `gh-pages`).
 
 ## Design system
 

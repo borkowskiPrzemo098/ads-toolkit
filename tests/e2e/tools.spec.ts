@@ -18,7 +18,7 @@ test.afterEach(async ({ page }) => {
 })
 
 test("profitability: reference campaign, comparison and CSV", async ({ page }) => {
-  await page.goto("/tools/profitability")
+  await page.goto("./tools/profitability")
   await fill(page, "Koszt reklamy", "2000")
   await fill(page, "Kliknięcia", "1000")
   await fill(page, "Konwersje", "40")
@@ -42,7 +42,7 @@ test("profitability: reference campaign, comparison and CSV", async ({ page }) =
 })
 
 test("budget planner: forecast and three scenarios", async ({ page }) => {
-  await page.goto("/tools/budget-planner")
+  await page.goto("./tools/budget-planner")
   await fill(page, "Budżet kampanii", "3000")
   await fill(page, "Średni CPC", "1,50")
   await fill(page, "Współczynnik konwersji", "2")
@@ -62,7 +62,7 @@ test("budget planner: forecast and three scenarios", async ({ page }) => {
 })
 
 test("keyword analyzer: duplicates, categories and TXT", async ({ page }) => {
-  await page.goto("/tools/keyword-analyzer")
+  await page.goto("./tools/keyword-analyzer")
   await page
     .getByLabel("Lista słów kluczowych")
     .fill(
@@ -86,7 +86,7 @@ test("keyword analyzer: duplicates, categories and TXT", async ({ page }) => {
 })
 
 test("negative keywords: nothing exported without acceptance", async ({ page }) => {
-  await page.goto("/tools/negative-keywords")
+  await page.goto("./tools/negative-keywords")
   await page
     .getByLabel("Wyszukiwane hasła")
     .fill("praca w sklepie obuwniczym\nbuty za darmo\nbuty do biegania damskie")
@@ -104,7 +104,7 @@ test("negative keywords: nothing exported without acceptance", async ({ page }) 
 })
 
 test("UTM builder: keeps existing parameters and the fragment", async ({ page }) => {
-  await page.goto("/tools/utm-builder")
+  await page.goto("./tools/utm-builder")
   await fill(page, "Adres strony", "sklep.pl/buty?kolor=czarny#opinie")
   await page.getByRole("button", { name: "Newsletter" }).click()
   await fill(page, "Kampania (utm_campaign)", "Listopad Wyprzedaż")
@@ -115,7 +115,7 @@ test("UTM builder: keeps existing parameters and the fragment", async ({ page })
 })
 
 test("RSA builder: proposals, limits and export", async ({ page }) => {
-  await page.goto("/tools/rsa-builder")
+  await page.goto("./tools/rsa-builder")
   await fill(page, "Nazwa firmy", "Biegam.pl")
   await fill(page, "Produkt lub usługa", "Buty do biegania")
   await fill(page, "Główne słowa kluczowe", "buty do biegania")
@@ -145,7 +145,7 @@ test("RSA builder: proposals, limits and export", async ({ page }) => {
 })
 
 test("A/B calculator: reference example is significant", async ({ page }) => {
-  await page.goto("/tools/ab-testing")
+  await page.goto("./tools/ab-testing")
   for (const [variant, visits, conversions] of [
     ["Wariant A", "1000", "50"],
     ["Wariant B", "1000", "75"],
@@ -161,7 +161,7 @@ test("A/B calculator: reference example is significant", async ({ page }) => {
 })
 
 test("PPC report: CSV mapping step, preview and PDF", async ({ page }) => {
-  await page.goto("/tools/ppc-reports")
+  await page.goto("./tools/ppc-reports")
   const csv = [
     "Raport kampanii",
     "1 października 2026 - 2 października 2026",

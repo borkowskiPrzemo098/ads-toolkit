@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { MostUsed } from "@/components/dashboard/most-used"
@@ -5,7 +6,10 @@ import { PrivacyBand } from "@/components/dashboard/privacy-band"
 import { QuickBreakEven } from "@/components/dashboard/quick-break-even"
 import { FeaturedToolTile, ToolTile } from "@/components/dashboard/tool-tile"
 import { buttonVariants } from "@/components/ui/button"
+import { pageUrl } from "@/constants/site"
 import { TOOLS, toolHref } from "@/constants/tools"
+
+export const metadata: Metadata = { alternates: { canonical: pageUrl("/") } }
 
 const featured = TOOLS.filter((t) => t.featured)
 const rest = TOOLS.filter((t) => !t.featured)

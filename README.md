@@ -3,6 +3,8 @@
 Osiem narzędzi dla osób prowadzących kampanie Google Ads: rentowność, planer budżetu,
 analizator słów kluczowych, wykluczenia, generator UTM, kreator RSA, testy A/B i raporty PPC.
 
+**Wersja publiczna:** https://borkowskiprzemo098.github.io/ads-toolkit/
+
 - Interfejs po polsku, Premium Dark.
 - Bez logowania, bez Google Ads API, bez płatnych usług.
 - Wszystkie obliczenia i pliki CSV przetwarzane lokalnie w przeglądarce.
@@ -14,18 +16,22 @@ npm install
 npm run dev        # http://localhost:3000
 ```
 
-| Skrypt              | Co robi                                       |
-| ------------------- | --------------------------------------------- |
-| `npm run dev`       | serwer deweloperski                           |
-| `npm run build`     | build produkcyjny (wszystkie trasy statyczne) |
-| `npm run typecheck` | `next typegen` + `tsc --noEmit`               |
-| `npm run lint`      | ESLint (konfiguracja Next.js)                 |
-| `npm test`          | testy jednostkowe Vitest                      |
-| `npm run check`     | typecheck + lint + testy                      |
-| `npm run test:e2e`  | build + testy E2E Playwright (port 3420)      |
-| `npm run format`    | Prettier z sortowaniem klas Tailwind          |
+| Skrypt                | Co robi                                      |
+| --------------------- | -------------------------------------------- |
+| `npm run dev`         | serwer deweloperski                          |
+| `npm run build`       | statyczny eksport do `out/` (+ `fix-export`) |
+| `npm run build:pages` | build z `PAGES_BASE_PATH=/ads-toolkit`       |
+| `npm start`           | serwuje `out/` jak GitHub Pages (port 3420)  |
+| `npm run typecheck`   | `next typegen` + `tsc --noEmit`              |
+| `npm run lint`        | ESLint (konfiguracja Next.js)                |
+| `npm test`            | testy jednostkowe Vitest                     |
+| `npm run check`       | typecheck + lint + testy                     |
+| `npm run test:e2e`    | `build:pages` + testy E2E Playwright         |
+| `npm run format`      | Prettier z sortowaniem klas Tailwind         |
 
-Testy E2E (`tests/e2e/`) uruchamiają build produkcyjny. Przy pierwszym uruchomieniu
+Testy E2E (`tests/e2e/`) działają na statycznym eksporcie serwowanym pod `/ads-toolkit/`,
+tak jak w GitHub Pages (`scripts/serve-static.mjs`), więc wyłapują też linki i zasoby
+bez ścieżki bazowej. Przy pierwszym uruchomieniu
 zainstaluj przeglądarki: `npx playwright install chromium webkit firefox`.
 
 - `smoke.spec.ts` (tag `@smoke`): każda trasa w Chromium, Pixel 7, WebKit i Firefox:
@@ -37,8 +43,33 @@ zainstaluj przeglądarki: `npx playwright install chromium webkit firefox`.
   blokady CSP).
 
 Znany problem: na stacji, na której powstał projekt, Playwright nie uruchamia Firefoksa
-(`browserType.launch: spawn UNKNOWN`, sam plik firefox.exe działa). Chromium, Pixel 7
-i WebKit przechodzą; projekt `firefox` uruchom na innej maszynie lub w CI.
+(`browserType.launch: spawn UNKNOWN`). Firefox będzie testowany w GitHub Actions po włączeniu workflow (sekcja Publikacja).
+
+## Publikacja
+
+- Hosting: GitHub Pages, repozytorium `borkowskiPrzemo098/ads-toolkit`, HTTPS z
+  certyfikatem GitHub. Adresy, wersja i data dokumentów prawnych: `constants/site.ts`.
+- Publikacja: `npm run deploy` buduje stronę, uruchamia testy E2E i dopiero po ich
+  przejściu wypycha `out/` na gałąź `gh-pages` (Pages: „Deploy from a branch”).
+  `public/.nojekyll` wyłącza Jekylla, który pomijałby katalog `_next`.
+- CI (nieaktywne): `docs/ci/pages.yml` uruchamia check i E2E na Chromium, Pixel 7,
+  Firefox i WebKit, a potem publikuje przez Actions. Aby je włączyć: `gh auth refresh -h
+github.com -s workflow`, przenieś plik do `.github/workflows/`, w Settings → Pages
+  ustaw źródło „GitHub Actions”.
+- Eksport statyczny (`output: "export"`, `trailingSlash`). Cache Components/PPR są
+  wyłączone, bo tryb eksportu ich nie obsługuje; wszystkie trasy i tak są statyczne.
+- `scripts/fix-export.mjs` obchodzi błąd Next.js 16.4: zapisuje dane prefetchu
+  (`__next.tools.x.__PAGE__.txt`) pod nazwami, o które prosi router. Bez tego każdy
+  prefetch kończy się 404, a linki przeładowują całą stronę. Test smoke wykrywa regresję
+  (błędy konsoli).
+- SEO: tytuły i opisy każdej strony, adresy kanoniczne (`pageUrl`), Open Graph z obrazem
+  `app/opengraph-image.png`, `sitemap.xml`, `robots.txt`, favicon SVG i ikona Apple.
+  `metadataBase` to sama domena: Next.js sam dokleja ścieżkę bazową do obrazów.
+- Strony informacyjne: `/o-aplikacji`, `/prywatnosc`, `/regulamin` (linki w stopce).
+- Własna domena: dodaj plik `public/CNAME`, ustaw DNS (CNAME na
+  `borkowskiprzemo098.github.io`), zmień `SITE_URL` w `constants/site.ts` i
+  `PAGES_BASE_PATH` na pusty w `scripts/build-pages.mjs` (i w workflow) oraz `BASE_PATH` w `playwright.config.ts`.
+  `robots.txt` zacznie wtedy działać (w podkatalogu roboty go nie czytają).
 
 ## Stos
 
@@ -128,17 +159,17 @@ tests/e2e/              testy Playwright (smoke na 4 silnikach, scenariusze narz
 
 ## Status etapów
 
-| Etap | Zakres                       | Status       |
-| ---- | ---------------------------- | ------------ |
-| 0    | Przygotowanie projektu       | gotowy       |
-| 1    | Design system i panel główny | gotowy       |
-| 2    | Kalkulator rentowności       | gotowy       |
-| 3    | Planer budżetu               | gotowy       |
-| 4    | Analizator słów kluczowych   | gotowy       |
-| 5    | Generator wykluczeń          | gotowy       |
-| 6    | Generator UTM                | gotowy       |
-| 7    | Kreator reklam RSA           | gotowy       |
-| 8    | Kalkulator testów A/B        | gotowy       |
-| 9    | Generator raportów PPC       | gotowy       |
-| 10   | Testy i optymalizacja        | gotowy       |
-| 11   | Publikacja                   | do zrobienia |
+| Etap | Zakres                       | Status |
+| ---- | ---------------------------- | ------ |
+| 0    | Przygotowanie projektu       | gotowy |
+| 1    | Design system i panel główny | gotowy |
+| 2    | Kalkulator rentowności       | gotowy |
+| 3    | Planer budżetu               | gotowy |
+| 4    | Analizator słów kluczowych   | gotowy |
+| 5    | Generator wykluczeń          | gotowy |
+| 6    | Generator UTM                | gotowy |
+| 7    | Kreator reklam RSA           | gotowy |
+| 8    | Kalkulator testów A/B        | gotowy |
+| 9    | Generator raportów PPC       | gotowy |
+| 10   | Testy i optymalizacja        | gotowy |
+| 11   | Publikacja                   | gotowy |

@@ -1,11 +1,11 @@
 {
   "name": "google-ads-toolkit",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && node scripts/fix-export.mjs",
+    "start": "node scripts/serve-static.mjs",
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
@@ -13,7 +13,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "test:e2e": "next build && playwright test"
+    "build:pages": "node scripts/build-pages.mjs",
+    "test:e2e": "npm run build:pages && playwright test",
+    "deploy": "npm run test:e2e && node scripts/deploy-pages.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.9.0",
