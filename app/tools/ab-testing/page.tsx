@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { ToolPlaceholder } from "@/components/layout/tool-placeholder"
+import { RecordVisit } from "@/components/layout/record-visit"
+import { AbTesting } from "@/components/tools/ab-testing/ab-testing"
 import { TOOL_BY_SLUG } from "@/constants/tools"
 
 const tool = TOOL_BY_SLUG["ab-testing"]
@@ -7,5 +8,10 @@ const tool = TOOL_BY_SLUG["ab-testing"]
 export const metadata: Metadata = { title: tool.name, description: tool.description }
 
 export default function Page() {
-  return <ToolPlaceholder slug="ab-testing" />
+  return (
+    <>
+      <RecordVisit slug="ab-testing" />
+      <AbTesting />
+    </>
+  )
 }

@@ -54,6 +54,7 @@ lib/
   negatives/            słowniki sugestii wykluczeń (darmowe, praca, używane…)
   utm/                  budowa linków UTM, normalizacja, szablony, historia sesji
   rsa/                  limity RSA, zasady redakcyjne, biblioteka formuł, podgląd
+  stats/                rozkład normalny (CDF, wartości p)
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -86,6 +87,10 @@ tests/unit/             testy Vitest
   obietnic; widoczne są tylko teksty w limicie. Walidacja zasad Google Ads (wykrzykniki,
   emoji, powtórzenia, wielkie litery, telefon) jest heurystyczna, a wskazówki nie są oceną
   skuteczności Google.
+- Test A/B: dwustronny test z dla dwóch proporcji (α = 0,05), przedziały Wilsona i
+  Newcombe’a, liczebność próby dla mocy 80%. Testy sprawdzają wyniki na niezależnie
+  policzonych przykładach. Bez wystarczającej próby (oczekiwane < 5 konwersji lub
+  braków konwersji w wariancie) narzędzie nie wydaje werdyktu.
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -102,6 +107,7 @@ tests/unit/             testy Vitest
 | 5    | Generator wykluczeń          | gotowy       |
 | 6    | Generator UTM                | gotowy       |
 | 7    | Kreator reklam RSA           | gotowy       |
-| 8–9  | Pozostałe narzędzia          | do zrobienia |
+| 8    | Kalkulator testów A/B        | gotowy       |
+| 9    | Generator raportów PPC       | do zrobienia |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |
