@@ -1,5 +1,8 @@
 export type Currency = "PLN" | "EUR"
 
+/** Unit shown inside money inputs. */
+export const CURRENCY_SUFFIX: Record<Currency, string> = { PLN: "zł", EUR: "€" }
+
 const LOCALE = "pl-PL"
 
 /** Typographic minus (U+2212) instead of the hyphen Intl emits; reads better in tabular figures. */
@@ -23,6 +26,16 @@ export function formatCurrency(
   digits = 2
 ): string {
   return format(value, digits, { style: "currency", currency })
+}
+
+/** Short form for chart axes: 3000 → "3 tys. zł", 1 250 000 → "1,3 mln zł". */
+export function formatCompactCurrency(value: number, currency: Currency = "PLN"): string {
+  return format(value, 0, {
+    style: "currency",
+    currency,
+    notation: "compact",
+    maximumFractionDigits: 1,
+  })
 }
 
 /** `value` is already a percentage, e.g. 412.5 → "412,5%". */

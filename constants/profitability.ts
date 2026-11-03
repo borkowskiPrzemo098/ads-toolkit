@@ -1,7 +1,9 @@
+import type { MetricKind } from "@/lib/formatting/metric"
 import type { ProfitabilityResult } from "@/lib/calculations/profitability"
 import type { ProfitabilityField } from "@/lib/validators/profitability"
 
-export type MetricKind = "currency" | "percent"
+export type { MetricKind }
+
 /** Which direction is good when comparing campaigns; null = neither (context-dependent). */
 export type MetricDirection = "higher" | "lower" | null
 

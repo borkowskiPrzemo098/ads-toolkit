@@ -5,6 +5,7 @@ import { Columns2, RotateCcw, X } from "lucide-react"
 import { ProfitWaterfall } from "@/components/charts/profit-waterfall"
 import { ExportButtons } from "@/components/export/export-buttons"
 import { SegmentedControl } from "@/components/forms/segmented-control"
+import { MobileResultBar } from "@/components/layout/mobile-result-bar"
 import { Panel } from "@/components/layout/panel"
 import { ToolHeader } from "@/components/layout/tool-header"
 import { Button } from "@/components/ui/button"
@@ -14,7 +15,7 @@ import { toCsv } from "@/lib/export/csv"
 import { datedFilename, downloadBlob, downloadCsv } from "@/lib/export/download"
 import { profitabilityCsvRows, profitabilityReport } from "@/lib/export/profitability"
 import { profitabilityNotes } from "@/lib/export/profitability-text"
-import type { Currency } from "@/lib/formatting/number"
+import { formatCurrency, type Currency } from "@/lib/formatting/number"
 import {
   EMPTY_PROFITABILITY_FORM,
   validateProfitabilityForm,
@@ -25,7 +26,6 @@ import { CampaignForm } from "./campaign-form"
 import { ComparisonTable } from "./comparison-table"
 import { KpiSummary } from "./kpi-summary"
 import { MetricsTable } from "./metrics-table"
-import { MobileResultBar } from "./mobile-result-bar"
 
 interface Campaign {
   name: string
@@ -239,7 +239,20 @@ export function ProfitabilityCalculator() {
         </div>
       </div>
 
-      <MobileResultBar result={result} currency={currency} targetId={RESULTS_ID} />
+      <MobileResultBar
+        label="Zysk netto"
+        value={
+          result.netProfit.ok ? formatCurrency(result.netProfit.value, currency) : null
+        }
+        tone={
+          result.status === "profit"
+            ? "good"
+            : result.status === "loss"
+              ? "bad"
+              : undefined
+        }
+        targetId={RESULTS_ID}
+      />
     </>
   )
 }

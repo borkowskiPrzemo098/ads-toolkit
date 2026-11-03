@@ -119,7 +119,9 @@ export async function renderTableReport(report: TableReport): Promise<Blob> {
     const labelWidth = contentWidth - valueWidth * valueColumns
     const columnRight = (i: number) => PAGE.margin + labelWidth + valueWidth * i
 
-    ensureSpace(22)
+    // Keep short tables on one page; long ones may break between rows.
+    const estimatedHeight = 14 + table.rows.length * 9.8
+    ensureSpace(estimatedHeight < (bottom - PAGE.margin) / 2 ? estimatedHeight : 22)
     doc
       .setFont(FONT, "bold")
       .setFontSize(11)

@@ -6,14 +6,12 @@ import { NumberField } from "@/components/forms/number-field"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { PROFITABILITY_FIELD_GROUPS } from "@/constants/profitability"
-import type { Currency } from "@/lib/formatting/number"
+import { CURRENCY_SUFFIX, type Currency } from "@/lib/formatting/number"
 import type {
   ProfitabilityField,
   ProfitabilityForm,
   ProfitabilityValidation,
 } from "@/lib/validators/profitability"
-
-export const CURRENCY_SUFFIX: Record<Currency, string> = { PLN: "zł", EUR: "€" }
 
 interface CampaignFormProps {
   name: string

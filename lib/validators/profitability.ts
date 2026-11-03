@@ -1,5 +1,5 @@
-import { parseDecimal } from "@/lib/formatting/number"
 import type { ProfitabilityInput } from "@/lib/calculations/profitability"
+import { parseNumericForm, type NumericRule } from "./numeric-form"
 
 export type ProfitabilityField = keyof ProfitabilityInput
 export type ProfitabilityForm = Record<ProfitabilityField, string>
@@ -16,8 +16,12 @@ export const EMPTY_PROFITABILITY_FORM: ProfitabilityForm = {
   productCostPerConversion: "",
 }
 
-/** Fields that count whole events. Conversions stay decimal: Google Ads attribution splits them. */
-const WHOLE_NUMBER_FIELDS: ProfitabilityField[] = ["impressions", "clicks"]
+/** Impressions and clicks are whole events. Conversions stay decimal: attribution splits them. */
+const RULES: Partial<Record<ProfitabilityField, NumericRule>> = {
+  impressions: { integer: true },
+  clicks: { integer: true },
+  marginPercent: { max: 100, maxMessage: "Marża nie może przekraczać 100%." },
+}
 
 export interface ProfitabilityValidation {
   input: ProfitabilityInput
@@ -29,28 +33,7 @@ export interface ProfitabilityValidation {
 export function validateProfitabilityForm(
   form: ProfitabilityForm
 ): ProfitabilityValidation {
-  const errors: ProfitabilityValidation["errors"] = {}
-  const input = {} as ProfitabilityInput
-
-  for (const field of Object.keys(form) as ProfitabilityField[]) {
-    const raw = form[field].trim()
-    input[field] = null
-    if (raw === "") continue
-
-    const parsed = parseDecimal(raw)
-    if (parsed === null) {
-      errors[field] = "Wpisz liczbę, np. 1250 albo 1250,50."
-    } else if (parsed < 0) {
-      errors[field] = "Wartość nie może być ujemna."
-    } else if (WHOLE_NUMBER_FIELDS.includes(field) && !Number.isInteger(parsed)) {
-      errors[field] = "Wpisz liczbę całkowitą."
-    } else if (field === "marginPercent" && parsed > 100) {
-      errors[field] = "Marża nie może przekraczać 100%."
-    } else {
-      input[field] = parsed
-    }
-  }
-
+  const { values: input, errors } = parseNumericForm(form, RULES)
   return { input, errors, warnings: consistencyWarnings(input) }
 }
 

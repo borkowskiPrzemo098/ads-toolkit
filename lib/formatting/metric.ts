@@ -1,9 +1,20 @@
-import type { MetricKind } from "@/constants/profitability"
 import type { CalcResult } from "@/types/calculation"
-import { formatCurrency, formatPercent, type Currency } from "./number"
+import { formatCurrency, formatNumber, formatPercent, type Currency } from "./number"
+
+/** count: whole events (clicks); decimal: one decimal place (forecast conversions). */
+export type MetricKind = "currency" | "percent" | "count" | "decimal"
 
 export function formatMetricValue(value: number, kind: MetricKind, currency: Currency) {
-  return kind === "currency" ? formatCurrency(value, currency) : formatPercent(value, 1)
+  switch (kind) {
+    case "currency":
+      return formatCurrency(value, currency)
+    case "percent":
+      return formatPercent(value, 1)
+    case "count":
+      return formatNumber(Math.round(value))
+    case "decimal":
+      return formatNumber(value, 1)
+  }
 }
 
 /** Formatted value, or null when the metric cannot be computed. */
@@ -20,8 +31,8 @@ export function formatDelta(a: number, b: number, kind: MetricKind, currency: Cu
   const sign = delta > 0 ? "+" : delta < 0 ? "−" : ""
   const magnitude = Math.abs(delta)
   const body =
-    kind === "currency"
-      ? formatCurrency(magnitude, currency)
-      : `${formatPercent(magnitude, 1).replace("%", "")} p.p.`
+    kind === "percent"
+      ? `${formatPercent(magnitude, 1).replace("%", "")} p.p.`
+      : formatMetricValue(magnitude, kind, currency)
   return `${sign}${body}`
 }
