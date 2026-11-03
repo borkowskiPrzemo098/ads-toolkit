@@ -52,6 +52,7 @@ lib/
   csv/                  odczyt plików (BOM, UTF-16, limit 5 MB) i import CSV
   keywords/             normalizacja, polski stemmer, słowniki sygnałów, filtrowanie
   negatives/            słowniki sugestii wykluczeń (darmowe, praca, używane…)
+  utm/                  budowa linków UTM, normalizacja, szablony, historia sesji
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -77,6 +78,9 @@ tests/unit/             testy Vitest
 - Generator wykluczeń: żadna sugestia nie trafia na listę ani do eksportu bez kliknięcia
   „Wyklucz”. Masowa akceptacja pomija sugestie z konwersjami. Eksportujemy każdą formę
   słowa (wykluczenia nie obejmują odmian); dopasowanie ścisłe eksportuje całe hasła.
+- Generator UTM: istniejące parametry adresu zostają bez zmian, #fragment na końcu,
+  znaczniki {keyword} i {{ad.name}} nie są kodowane. Historia linków żyje w
+  sessionStorage (znika po zamknięciu karty).
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -91,6 +95,7 @@ tests/unit/             testy Vitest
 | 3    | Planer budżetu               | gotowy       |
 | 4    | Analizator słów kluczowych   | gotowy       |
 | 5    | Generator wykluczeń          | gotowy       |
-| 6–9  | Pozostałe narzędzia          | do zrobienia |
+| 6    | Generator UTM                | gotowy       |
+| 7–9  | Pozostałe narzędzia          | do zrobienia |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |

@@ -16,7 +16,8 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
    eksport przez `ExportButtons` + `lib/export/csv.ts` + `lib/pdf/table-report.ts`.
    Wspólne: `KpiTile`, `MobileResultBar`, `SegmentedControl`, `SelectField`,
    `parseNumericForm`, `useListImport` + `ListTextarea` + `FileImportField` (import list),
-   `parseReportNumber` (liczby z raportów), `lib/keywords/*` (tekst PL).
+   `parseReportNumber` (liczby z raportów), `lib/keywords/*` (tekst PL), `TextField`,
+   `useCopy` (schowek z awaryjną metodą), `useSessionValue` (sessionStorage).
    Wzorce: `components/tools/profitability`, `components/tools/budget-planner`. Nie twórz nowego stylu kart ani przycisków.
 5. ROAS ≠ ROI. Przychód ≠ zysk. Heurystyki (intencja, wykluczenia) zawsze opisane jako
    sugestie. Prognozy nigdy jako gwarancje. Wykluczenia wymagają akceptacji użytkownika.

@@ -15,8 +15,12 @@ const DIACRITICS: Record<string, string> = {
   ż: "z",
 }
 
+/** Replaces Polish letters with plain ones, keeping case: "Łódź" → "Lodz". */
 export function stripDiacritics(text: string): string {
-  return text.replace(/[ąćęłńóśźż]/g, (ch) => DIACRITICS[ch])
+  return text.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, (ch) => {
+    const plain = DIACRITICS[ch.toLowerCase()]
+    return ch === ch.toLowerCase() ? plain : plain.toUpperCase()
+  })
 }
 
 /**

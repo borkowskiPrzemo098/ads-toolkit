@@ -1,26 +1,18 @@
 "use client"
 
-import { useState } from "react"
 import { Check, Copy } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useCopy } from "@/hooks/use-copy"
 import type { NegativeList } from "@/lib/calculations/negative-keywords"
 import { negativePlainList } from "@/lib/export/negative-keywords"
 import { formatNumber } from "@/lib/formatting/number"
 
 /** The final list exactly as it will be exported, built from accepted suggestions only. */
 export function NegativeListPanel({ list }: { list: NegativeList }) {
-  const [copied, setCopied] = useState(false)
+  const { copy: copyText, copiedId, failed } = useCopy()
+  const copied = copiedId === "list"
   const text = negativePlainList(list)
-
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {
-      setCopied(false)
-    }
-  }
+  const copy = () => copyText(text, "list")
 
   if (list.entries.length === 0) {
     return (
@@ -43,6 +35,11 @@ export function NegativeListPanel({ list }: { list: NegativeList }) {
           {copied ? "Skopiowano" : "Kopiuj listę"}
         </Button>
       </div>
+      {failed && (
+        <p role="alert" className="text-xs text-destructive">
+          Przeglądarka zablokowała schowek. Zaznacz listę poniżej i skopiuj ją ręcznie.
+        </p>
+      )}
       <pre className="max-h-72 overflow-auto rounded-lg border border-border bg-background px-3 py-2.5 font-mono text-[13px] leading-6 whitespace-pre-wrap text-[#c9cfdb]">
         {text}
       </pre>
