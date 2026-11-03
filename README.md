@@ -53,6 +53,7 @@ lib/
   keywords/             normalizacja, polski stemmer, słowniki sygnałów, filtrowanie
   negatives/            słowniki sugestii wykluczeń (darmowe, praca, używane…)
   utm/                  budowa linków UTM, normalizacja, szablony, historia sesji
+  rsa/                  limity RSA, zasady redakcyjne, biblioteka formuł, podgląd
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -81,6 +82,10 @@ tests/unit/             testy Vitest
 - Generator UTM: istniejące parametry adresu zostają bez zmian, #fragment na końcu,
   znaczniki {keyword} i {{ad.name}} nie są kodowane. Historia linków żyje w
   sessionStorage (znika po zamknięciu karty).
+- Kreator RSA: propozycje z szablonów i danych użytkownika, bez AI i bez dopisywania
+  obietnic; widoczne są tylko teksty w limicie. Walidacja zasad Google Ads (wykrzykniki,
+  emoji, powtórzenia, wielkie litery, telefon) jest heurystyczna, a wskazówki nie są oceną
+  skuteczności Google.
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -96,6 +101,7 @@ tests/unit/             testy Vitest
 | 4    | Analizator słów kluczowych   | gotowy       |
 | 5    | Generator wykluczeń          | gotowy       |
 | 6    | Generator UTM                | gotowy       |
-| 7–9  | Pozostałe narzędzia          | do zrobienia |
+| 7    | Kreator reklam RSA           | gotowy       |
+| 8–9  | Pozostałe narzędzia          | do zrobienia |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |
