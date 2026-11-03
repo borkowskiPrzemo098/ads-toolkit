@@ -21,9 +21,7 @@ export interface ToolMeta {
   /** The question this tool answers for the user. */
   question: string
   icon: LucideIcon
-  /** Build stage from the project plan in which the tool gets its logic. */
-  stage: number
   featured?: boolean
-  inputs: string[]
+  /** What the tool produces; listed on the featured dashboard tiles. */
   outputs: string[]
 }

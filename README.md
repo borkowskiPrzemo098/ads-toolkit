@@ -48,13 +48,15 @@ lib/
   formatting/           formatowanie i parsowanie liczb (pl-PL)
   validators/           walidacja formularzy: wspólne parseNumericForm + reguły narzędzi
   export/               CSV (ochrona przed formułami), pobieranie, modele raportów
-  pdf/                  raport tabelaryczny jsPDF z czcionką Geist (polskie znaki)
+  pdf/                  jsPDF z czcionką Geist: wspólny dokument, raport tabelaryczny,
+                        raport PPC dla klienta (okładka, KPI, wykresy, teksty)
   csv/                  odczyt plików (BOM, UTF-16, limit 5 MB) i import CSV
   keywords/             normalizacja, polski stemmer, słowniki sygnałów, filtrowanie
   negatives/            słowniki sugestii wykluczeń (darmowe, praca, używane…)
   utm/                  budowa linków UTM, normalizacja, szablony, historia sesji
   rsa/                  limity RSA, zasady redakcyjne, biblioteka formuł, podgląd
   stats/                rozkład normalny (CDF, wartości p)
+  reports/              import raportów (mapowanie kolumn, daty), agregacja, teksty
   utils.ts              `cn` (alias wymagany przez shadcn)
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
@@ -91,6 +93,9 @@ tests/unit/             testy Vitest
   Newcombe’a, liczebność próby dla mocy 80%. Testy sprawdzają wyniki na niezależnie
   policzonych przykładach. Bez wystarczającej próby (oczekiwane < 5 konwersji lub
   braków konwersji w wariancie) narzędzie nie wydaje werdyktu.
+- Raporty PPC: import CSV zawsze przez krok mapowania kolumn z podglądem; nieczytelne
+  wiersze są wypisywane z numerem. Teksty raportu opisują liczby i sugerują, co sprawdzić;
+  nie podają przyczyn zmian. Wszystkie teksty można edytować przed eksportem.
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
@@ -108,6 +113,6 @@ tests/unit/             testy Vitest
 | 6    | Generator UTM                | gotowy       |
 | 7    | Kreator reklam RSA           | gotowy       |
 | 8    | Kalkulator testów A/B        | gotowy       |
-| 9    | Generator raportów PPC       | do zrobienia |
+| 9    | Generator raportów PPC       | gotowy       |
 | 10   | Testy i optymalizacja        | do zrobienia |
 | 11   | Publikacja                   | do zrobienia |

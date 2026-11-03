@@ -13,7 +13,8 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
    puste i błędne dane, wartości graniczne). Wzory sprawdzaj na niezależnych przykładach.
 3. Nazwy, kolejność, ikony i opisy narzędzi tylko w `constants/tools.ts`.
 4. Nowe narzędzie: `ToolHeader` + `Panel` (components/layout), pola z `components/forms`,
-   eksport przez `ExportButtons` + `lib/export/csv.ts` + `lib/pdf/table-report.ts`.
+   eksport przez `ExportButtons` + `lib/export/csv.ts` + `lib/pdf/table-report.ts`
+   (nowe układy PDF budować na `lib/pdf/document.ts`).
    Wspólne: `KpiTile`, `MobileResultBar`, `SegmentedControl`, `SelectField`,
    `parseNumericForm`, `useListImport` + `ListTextarea` + `FileImportField` (import list),
    `parseReportNumber` (liczby z raportów), `lib/keywords/*` (tekst PL), `TextField`,
