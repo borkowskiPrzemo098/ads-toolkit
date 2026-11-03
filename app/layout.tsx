@@ -50,6 +50,8 @@ const CONTENT_SECURITY_POLICY = [
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "connect-src 'self'",
+  // The campaign auditor parses imported reports in a Web Worker.
+  "worker-src 'self' blob:",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'none'",

@@ -1,4 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
+import { uploadReports, VALID_REPORTS } from "./auditor-fixtures"
+import { waitForHydration } from "./helpers"
 import { auditLayout, type LayoutIssue } from "./layout-audit"
 
 /*
@@ -163,6 +165,18 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await fill(page, "Nazwa klienta", "Biegam.pl Sp. z o.o. – sklep internetowy")
     },
   ],
+  [
+    "audyt kampanii",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, VALID_REPORTS)
+      await expect(page.getByRole("article")).toHaveCount(VALID_REPORTS.length)
+      await page
+        .getByRole("article", { name: "Raport lokalizacje.csv" })
+        .getByRole("button", { name: "Przypisz kolumny" })
+        .click()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)
@@ -186,7 +200,7 @@ for (const [name, path, setup] of PAGES) {
         await page.setViewportSize({ width: vp.width, height: vp.height })
         await page.goto(path)
         // WebKit can take input before React hydrates, and the typed text would be lost.
-        await page.waitForLoadState("networkidle")
+        await waitForHydration(page)
         if (state === "wypełnione") await setup!(page)
         await page.waitForTimeout(300)
         problems.push(

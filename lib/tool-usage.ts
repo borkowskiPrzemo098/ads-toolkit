@@ -26,7 +26,7 @@ export function parseToolUsage(raw: string | null): ToolUsage {
 /** Most used first; ties keep the registry order. */
 export function topTools(usage: ToolUsage, limit = 3): ToolSlug[] {
   return (Object.keys(TOOL_BY_SLUG) as ToolSlug[])
-    .filter((slug) => (usage[slug] ?? 0) > 0)
+    .filter((slug) => (usage[slug] ?? 0) > 0 && !TOOL_BY_SLUG[slug].hidden)
     .sort((a, b) => (usage[b] ?? 0) - (usage[a] ?? 0))
     .slice(0, limit)
 }

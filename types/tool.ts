@@ -9,6 +9,7 @@ export type ToolSlug =
   | "rsa-builder"
   | "ab-testing"
   | "ppc-reports"
+  | "campaign-auditor"
 
 export interface ToolMeta {
   slug: ToolSlug
@@ -26,4 +27,6 @@ export interface ToolMeta {
   featured?: boolean
   /** What the tool produces; listed on the featured dashboard tiles. */
   outputs: string[]
+  /** Built in stages: reachable by URL, left out of navigation, dashboard and sitemap. */
+  hidden?: boolean
 }

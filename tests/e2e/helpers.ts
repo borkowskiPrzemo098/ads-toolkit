@@ -53,3 +53,14 @@ export async function expectAccessible(page: Page) {
     )
   expect(serious, "accessibility violations").toEqual([])
 }
+
+/**
+ * Waits until React has hydrated the page: input typed earlier can be lost in WebKit.
+ * React marks hydrated DOM nodes with "__reactFiber…" properties.
+ */
+export async function waitForHydration(page: Page) {
+  await page.waitForFunction(() => {
+    const el = document.querySelector("main button, main input, main a")
+    return !el || Object.keys(el).some((k) => k.startsWith("__reactFiber"))
+  })
+}

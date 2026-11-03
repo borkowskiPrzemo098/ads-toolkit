@@ -179,3 +179,41 @@ tests/e2e/              testy Playwright (smoke na 4 silnikach, scenariusze narz
 | 9    | Generator raportów PPC       | gotowy |
 | 10   | Testy i optymalizacja        | gotowy |
 | 11   | Publikacja                   | gotowy |
+
+## Audyt kampanii (Campaign Auditor)
+
+Moduł w budowie pod `/tools/campaign-auditor` (ukryty w menu, panelu i mapie strony do
+czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
+
+| Etap | Zakres                                                    | Status       |
+| ---- | --------------------------------------------------------- | ------------ |
+| 1    | Analiza projektu i plan                                   | gotowy       |
+| 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy       |
+| 3    | Normalizacja i łączenie danych                            | do zrobienia |
+| 4    | Dashboard KPI i wykresy                                   | do zrobienia |
+| 5    | Audyt kampanii i słów kluczowych                          | do zrobienia |
+| 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | do zrobienia |
+| 7    | Rekomendacje i indeks efektywności                        | do zrobienia |
+| 8    | Rentowność i porównanie okresów                           | do zrobienia |
+| 9    | Raport PDF i plan działań                                 | do zrobienia |
+| 10   | Testy, wydajność, bezpieczeństwo, regresja                | do zrobienia |
+
+Import (`lib/auditor/`):
+
+- `parse.ts`: CSV (separator `,` `;` lub tabulator wykrywany z cudzysłowami, UTF-8/UTF-16)
+  i XLSX (`read-excel-file`, ładowany tylko dla XLSX). Format z zawartości pliku, nie z
+  rozszerzenia. Limity: 50 MB i 300 000 wierszy na plik. Parsowanie w Web Workerze
+  (`parse.worker.ts`, CSP `worker-src`), z awaryjnym parsowaniem na głównym wątku.
+- `columns.ts`: słownik nagłówków Google Ads PL/EN → pola modelu. Wskaźniki pochodne (CTR,
+  CPA, ROAS…) są rozpoznawane, ale nigdy sumowane: KPI liczymy od nowa z metryk bazowych.
+- `detect.ts`: typ raportu z najbardziej szczegółowego wymiaru (hasło → słowo → reklama →
+  … → kampania), kolumny wymagane i przydatne dla każdego typu.
+- `import.ts`: wiersz nagłówka pod tytułem i zakresem dat, okres z kolumny dat albo z linii
+  nad nagłówkiem, wiersze „Razem/Total” i powtórzone nagłówki pomijane z informacją,
+  duplikaty zgłaszane (pomijane tylko na życzenie), błędne i ujemne liczby, brakujące
+  kolumny. XLSX: liczby kanoniczne (`41.333`), CSV: format PL i EN.
+- `summary.ts`: uwagi do zestawu (różne okresy, dwa raporty tego samego typu, z którego
+  raportu liczone są sumy, łączenie bez identyfikatorów).
+- Mapowanie kolumn zapamiętywane w ramach audytu po sygnaturze nagłówka.
+- Pliki testowe: `tests/fixtures/auditor/` (generator `generate.py`, wymaga `openpyxl`).
+  200 000 wierszy (26 MB) wczytuje się w ok. 2 s.

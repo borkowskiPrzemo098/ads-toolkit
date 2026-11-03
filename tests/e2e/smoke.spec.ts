@@ -11,6 +11,7 @@ const PAGES = [
   ["/tools/rsa-builder", "Kreator reklam RSA"],
   ["/tools/ab-testing", "Kalkulator testów A/B"],
   ["/tools/ppc-reports", "Raporty PPC"],
+  ["/tools/campaign-auditor", "Audyt kampanii"],
   ["/o-aplikacji", "O aplikacji"],
   ["/prywatnosc", "Polityka prywatności"],
   ["/regulamin", "Regulamin"],

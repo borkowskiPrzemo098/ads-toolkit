@@ -1,0 +1,9 @@
+Search terms report
+"October 1, 2026 - October 31, 2026"
+Search term,Match type,Added/Excluded,Campaign,Ad group,Search keyword,Impr.,Clicks,Cost,Conversions,Conv. value
+buty do biegania damskie,Phrase match,Added,Buty – Search,Damskie,buty do biegania,"4,210",312,296.40,14.00,"2,800.00"
+buty do biegania za darmo,Broad match,None,Buty – Search,Ogólne,buty do biegania,"1,020",84,75.60,0.00,0.00
+praca sklep obuwniczy,Broad match,None,Buty – Search,Ogólne,sklep obuwniczy,640,51,40.80,0.00,0.00
+jak wyczyścić buty zamszowe,Broad match,None,Buty – Search,Ogólne,buty zamszowe,"2,300",96,48.00,1.00,180.00
+nike pegasus 41 cena,Exact match (close variant),None,Buty – Search,Nike,nike pegasus,880,77,123.20,6.00,"3,240.00"
+Total: Search terms,,,,,,"9,050",620,584.00,21.00,"6,220.00"

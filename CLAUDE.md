@@ -37,6 +37,17 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
     z `alternates.canonical: pageUrl(...)`, wpis w `app/sitemap.ts` i w smoke E2E.
     Publikacja: `npm run deploy` (testy E2E, potem push `out/` na `gh-pages`).
 
+## Audyt kampanii
+
+- Logika w `lib/auditor/*`, UI w `components/tools/campaign-auditor/*`. Reguły audytu nigdy
+  w komponentach. Każdy wniosek musi podać raport źródłowy, wymiar, liczby, okres i wzór.
+- Sumy konta tylko z raportu najwyższego poziomu; raporty szczegółowe nie są do nich
+  dodawane (podwójne zliczanie). Łączenie po ID, nazwy tylko awaryjnie.
+- Nowy typ raportu lub nagłówek: `columns.ts` + `detect.ts` + plik w
+  `tests/fixtures/auditor/generate.py` + test w `tests/unit/auditor-import.test.ts`.
+- Dane raportów tylko w pamięci karty. Bez zapisu w storage bez zgody użytkownika.
+- Przed odsłonięciem w menu: usuń `hidden: true` w `constants/tools.ts` i `noindex` ze strony.
+
 ## Design system
 
 - Tokeny w `app/globals.css` (`:root`). Paleta ze specyfikacji, aplikacja tylko ciemna
