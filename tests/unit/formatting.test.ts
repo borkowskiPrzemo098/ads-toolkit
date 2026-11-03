@@ -28,6 +28,12 @@ describe("formatters", () => {
     expect(nbsp(formatCurrency(10, "EUR"))).toBe("10,00 €")
   })
 
+  it("uses a typographic minus and never prints negative zero", () => {
+    expect(nbsp(formatCurrency(-1100))).toBe("−1100,00 zł")
+    expect(formatPercent(-57.89)).toBe("−57,9%")
+    expect(nbsp(formatCurrency(-0.001))).toBe("0,00 zł")
+  })
+
   it("formats percentages with a comma", () => {
     expect(formatPercent(412.5)).toBe("412,5%")
   })

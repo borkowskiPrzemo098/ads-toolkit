@@ -12,8 +12,9 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
 2. Każda funkcja obliczeniowa ma testy w `tests/unit/` (poprawne wartości, zera,
    puste i błędne dane, wartości graniczne). Wzory sprawdzaj na niezależnych przykładach.
 3. Nazwy, kolejność, ikony i opisy narzędzi tylko w `constants/tools.ts`.
-4. Nowe narzędzie: `ToolHeader` + `Panel` (components/layout), pola z `components/forms`.
-   Nie twórz nowego stylu kart ani przycisków.
+4. Nowe narzędzie: `ToolHeader` + `Panel` (components/layout), pola z `components/forms`,
+   eksport przez `ExportButtons` + `lib/export/csv.ts` + `lib/pdf/table-report.ts`.
+   Wzorzec: `components/tools/profitability`. Nie twórz nowego stylu kart ani przycisków.
 5. ROAS ≠ ROI. Przychód ≠ zysk. Heurystyki (intencja, wykluczenia) zawsze opisane jako
    sugestie. Prognozy nigdy jako gwarancje. Wykluczenia wymagają akceptacji użytkownika.
 6. Bez zewnętrznych API, logowania, bazy, płatności i trackerów. Bez fikcyjnych danych

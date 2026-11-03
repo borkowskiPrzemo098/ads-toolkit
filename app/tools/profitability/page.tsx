@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { ToolPlaceholder } from "@/components/layout/tool-placeholder"
+import { RecordVisit } from "@/components/layout/record-visit"
+import { ProfitabilityCalculator } from "@/components/tools/profitability/profitability-calculator"
 import { TOOL_BY_SLUG } from "@/constants/tools"
 
 const tool = TOOL_BY_SLUG["profitability"]
@@ -7,5 +8,10 @@ const tool = TOOL_BY_SLUG["profitability"]
 export const metadata: Metadata = { title: tool.name, description: tool.description }
 
 export default function Page() {
-  return <ToolPlaceholder slug="profitability" />
+  return (
+    <>
+      <RecordVisit slug="profitability" />
+      <ProfitabilityCalculator />
+    </>
+  )
 }
