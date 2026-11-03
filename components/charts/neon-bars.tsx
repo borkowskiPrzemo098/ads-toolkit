@@ -48,12 +48,12 @@ export function NeonBars({ bars, caption, max, className }: NeonBarsProps) {
                 {bar.href ? (
                   <Link
                     href={bar.href}
-                    className="block truncate rounded text-sm text-[#d6dbe5] transition-colors duration-150 hover:text-(--bar)"
+                    className="-my-1 line-clamp-2 rounded py-1 text-sm leading-tight text-[#d6dbe5] transition-colors duration-150 hover:text-(--bar)"
                   >
                     {bar.label}
                   </Link>
                 ) : (
-                  <span className="block truncate text-sm text-[#d6dbe5]">
+                  <span className="line-clamp-2 text-sm leading-tight text-[#d6dbe5]">
                     {bar.label}
                   </span>
                 )}
@@ -83,17 +83,19 @@ export function NeonBars({ bars, caption, max, className }: NeonBarsProps) {
         })}
       </ul>
       {!linked && (
-        <table className="sr-only">
-          <caption>{caption}</caption>
-          <tbody>
-            {bars.map((bar) => (
-              <tr key={bar.label}>
-                <th scope="row">{bar.label}</th>
-                <td>{bar.display}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="sr-only">
+          <table>
+            <caption>{caption}</caption>
+            <tbody>
+              {bars.map((bar) => (
+                <tr key={bar.label}>
+                  <th scope="row">{bar.label}</th>
+                  <td>{bar.display}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </figure>
   )

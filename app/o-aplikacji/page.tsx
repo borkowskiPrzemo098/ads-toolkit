@@ -27,7 +27,9 @@ export default function Page() {
             >
               <ToolIcon icon={tool.icon} hue={tool.hue} size="sm" />
               <div>
-                <Link href={toolHref(tool.slug)}>{tool.name}</Link>
+                <Link href={toolHref(tool.slug)} className="-my-1 inline-block py-1">
+                  {tool.name}
+                </Link>
                 <p className="mt-0.5 text-sm text-muted-foreground">{tool.question}</p>
               </div>
             </li>

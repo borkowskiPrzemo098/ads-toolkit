@@ -43,7 +43,7 @@ export function MostUsed() {
       <NeonBars
         caption="Najczęściej używane narzędzia w tej przeglądarce"
         bars={top.map((slug) => ({
-          label: TOOL_BY_SLUG[slug].name,
+          label: TOOL_BY_SLUG[slug].navLabel ?? TOOL_BY_SLUG[slug].name,
           value: usage[slug] ?? 0,
           display: visits(usage[slug] ?? 0),
           color: TOOL_BY_SLUG[slug].hue,

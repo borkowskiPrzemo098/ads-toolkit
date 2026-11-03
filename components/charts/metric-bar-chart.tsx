@@ -32,7 +32,7 @@ export function MetricBarChart({ title, series, format, compact }: MetricBarChar
             <CartesianGrid vertical={false} stroke="#e2e5eb" />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 10, fill: "#626a7a" }}
+              tick={{ fontSize: 11, fill: "#626a7a" }}
               tickLine={false}
               axisLine={{ stroke: "#d4d8e0" }}
               interval="preserveStartEnd"
@@ -40,7 +40,7 @@ export function MetricBarChart({ title, series, format, compact }: MetricBarChar
             />
             <YAxis
               tickFormatter={compact}
-              tick={{ fontSize: 10, fill: "#626a7a" }}
+              tick={{ fontSize: 11, fill: "#626a7a" }}
               tickLine={false}
               axisLine={false}
               width={52}

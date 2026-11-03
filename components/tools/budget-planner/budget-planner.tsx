@@ -324,7 +324,7 @@ export function BudgetPlanner() {
               currency={currency}
             />
             {SCENARIOS.every((sc) => forecasts[sc.id].revenue.ok) && (
-              <div className="mt-6 grid gap-6 border-t border-border pt-5 md:grid-cols-2">
+              <div className="mt-6 grid gap-6 border-t border-border pt-5 2xl:grid-cols-2">
                 {(
                   [
                     ["conversions", "Konwersje", (v: number) => formatNumber(v, 1)],

@@ -151,7 +151,7 @@ export function PpcReports() {
           title="1. Dane"
           description="Bieżący okres jest wymagany. Okres porównawczy pozwala pokazać zmiany."
         >
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <section aria-label="Bieżący okres" className="flex flex-col gap-3">
               <h3 className="text-sm font-semibold">Bieżący okres</h3>
               <PeriodSource

@@ -26,7 +26,7 @@ export function KpiTile({
   return (
     <div
       className={cn(
-        "relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-4",
+        "@container relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-4",
         // Lit top edge: the tool's hue, or the verdict colour when the value has one.
         "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-linear-to-r before:from-transparent before:via-(--edge) before:to-transparent",
         "[--edge:var(--tool)]",
@@ -39,7 +39,8 @@ export function KpiTile({
         <>
           <p
             className={cn(
-              "mt-1.5 truncate text-[1.375rem] font-semibold tracking-tight tabular sm:text-2xl",
+              // Scales with the tile (container query), so "4 255 319,40 zł" fits instead of being cut.
+              "mt-1.5 text-[clamp(1rem,13cqi,1.5rem)] leading-tight font-semibold tracking-tight [overflow-wrap:anywhere] tabular",
               // Values without a verdict take the tool's hue, so the result row is never grey.
               !tone && "text-(--tool) neon-text",
               tone === "good" && "text-success neon-text",
@@ -50,20 +51,20 @@ export function KpiTile({
           </p>
           {meter && <ThresholdMeter {...meter} />}
           {(detail || check != null) && (
-            <p className="mt-auto flex items-center gap-1.5 pt-2 text-xs text-muted-foreground">
+            <p className="mt-auto flex items-start gap-1.5 pt-2 text-xs leading-snug text-muted-foreground">
               {check === true && (
                 <CircleCheck
-                  className="size-3.5 shrink-0 text-success"
+                  className="mt-px size-3.5 shrink-0 text-success"
                   aria-label="w normie"
                 />
               )}
               {check === false && (
                 <CircleX
-                  className="size-3.5 shrink-0 text-destructive"
+                  className="mt-px size-3.5 shrink-0 text-destructive"
                   aria-label="poza normą"
                 />
               )}
-              <span className="truncate">{detail}</span>
+              <span className="min-w-0">{detail}</span>
             </p>
           )}
         </>

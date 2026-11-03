@@ -36,11 +36,11 @@ export function MobileResultBar({ label, value, tone, targetId }: MobileResultBa
       href={`#${targetId}`}
       className="fixed inset-x-3 bottom-3 z-30 flex items-center justify-between gap-3 rounded-xl border border-[#2f3848] bg-popover/95 px-4 py-3 shadow-[0_8px_30px_rgb(0_0_0/0.5)] backdrop-blur-md lg:hidden"
     >
-      <span className="flex flex-col">
+      <span className="flex min-w-0 flex-col">
         <span className="text-xs text-muted-foreground">{label}</span>
         <span
           className={cn(
-            "text-lg font-semibold tabular",
+            "truncate text-lg font-semibold tabular",
             tone === "good" && "text-success",
             tone === "bad" && "text-destructive"
           )}
@@ -48,7 +48,7 @@ export function MobileResultBar({ label, value, tone, targetId }: MobileResultBa
           {value}
         </span>
       </span>
-      <span className="flex items-center gap-1.5 text-sm font-medium text-[#b3a9ff]">
+      <span className="flex shrink-0 items-center gap-1.5 text-sm font-medium text-[#b3a9ff]">
         Zobacz wyniki
         <ArrowDown className="size-4" aria-hidden="true" />
       </span>

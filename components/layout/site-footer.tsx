@@ -18,7 +18,7 @@ export function SiteFooter() {
               <li key={href}>
                 <Link
                   href={href}
-                  className="rounded transition-colors duration-150 hover:text-foreground"
+                  className="-my-1 inline-block rounded py-1 transition-colors duration-150 hover:text-foreground"
                 >
                   {label}
                 </Link>
@@ -28,7 +28,7 @@ export function SiteFooter() {
               <a
                 href={REPO_URL}
                 rel="noopener"
-                className="rounded transition-colors duration-150 hover:text-foreground"
+                className="-my-1 inline-block rounded py-1 transition-colors duration-150 hover:text-foreground"
               >
                 Kod źródłowy
               </a>

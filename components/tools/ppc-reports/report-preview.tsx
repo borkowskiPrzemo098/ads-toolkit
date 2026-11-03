@@ -153,7 +153,7 @@ export function ReportPreview({ model }: { model: ReportModel }) {
       {model.current.campaigns && model.current.campaigns.length > 1 && (
         <section className="border-t border-[#e2e5eb] pt-6">
           <h3 className="mb-3 text-base font-semibold">Kampanie</h3>
-          <div className="-mx-6 overflow-x-auto px-6 sm:-mx-10 sm:px-10">
+          <div className="relative -mx-6 overflow-x-auto px-6 sm:-mx-10 sm:px-10">
             <table className="w-full min-w-[32rem] text-sm">
               <thead>
                 <tr className="border-b border-[#e2e5eb] text-xs text-[#626a7a]">

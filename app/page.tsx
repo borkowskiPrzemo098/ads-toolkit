@@ -17,8 +17,8 @@ const rest = TOOLS.filter((t) => !t.featured)
 export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-14 sm:gap-16">
-      <section className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,27rem)] lg:gap-12">
-        <div className="lg:pt-4">
+      <section className="grid items-start gap-8 xl:grid-cols-[minmax(0,1fr)_minmax(0,27rem)] xl:gap-12">
+        <div className="xl:pt-4">
           <h1 className="max-w-xl text-3xl font-semibold tracking-tight sm:text-[2.5rem] sm:leading-[1.1]">
             Policz kampanię, zanim wydasz kolejną złotówkę.
           </h1>
@@ -46,7 +46,10 @@ export default function DashboardPage() {
             <MostUsed />
           </div>
         </div>
-        <QuickBreakEven />
+        {/* Stacked under the intro below 1280px; kept at form width there. */}
+        <div className="max-w-xl xl:max-w-none">
+          <QuickBreakEven />
+        </div>
       </section>
 
       <section aria-labelledby="tools-heading">

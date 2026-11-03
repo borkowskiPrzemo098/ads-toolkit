@@ -133,17 +133,19 @@ export function ProfitWaterfall(props: ProfitWaterfallProps) {
           </span>
         ))}
       </div>
-      <table className="sr-only">
-        <caption>Przychód rozbity na koszty i zysk</caption>
-        <tbody>
-          {steps.map((step) => (
-            <tr key={step.label}>
-              <th scope="row">{step.label}</th>
-              <td>{signedMoney(step.amount)}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="sr-only">
+        <table>
+          <caption>Przychód rozbity na koszty i zysk</caption>
+          <tbody>
+            {steps.map((step) => (
+              <tr key={step.label}>
+                <th scope="row">{step.label}</th>
+                <td>{signedMoney(step.amount)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   )
 }

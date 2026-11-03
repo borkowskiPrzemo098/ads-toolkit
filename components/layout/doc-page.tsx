@@ -18,7 +18,10 @@ export function DocPage({ title, lead, updated, children }: DocPageProps) {
           aria-label="Ścieżka"
           className="mb-5 flex items-center gap-1 text-sm text-muted-foreground"
         >
-          <Link href="/" className="rounded transition-colors hover:text-foreground">
+          <Link
+            href="/"
+            className="-my-0.5 inline-block rounded py-0.5 transition-colors hover:text-foreground"
+          >
             Panel główny
           </Link>
           <ChevronRight className="size-3.5" aria-hidden="true" />
