@@ -15,6 +15,7 @@ import type { KeywordRow } from "@/lib/calculations/keyword-analyzer"
 import { formatNumber } from "@/lib/formatting/number"
 import type { KeywordFilters } from "@/lib/keywords/filter"
 import { cn } from "@/lib/utils"
+import { TableScroll } from "@/components/layout/table-scroll"
 
 export const PAGE_SIZE = 100
 
@@ -98,7 +99,7 @@ export function KeywordTable({
           Żadna fraza nie pasuje do filtrów.
         </p>
       ) : (
-        <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
+        <TableScroll label="Tabela słów kluczowych">
           <table className="w-full min-w-[56rem] text-sm">
             <thead>
               <tr className="border-b border-border text-left text-xs text-muted-foreground">
@@ -182,7 +183,7 @@ export function KeywordTable({
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       )}
 
       {pages > 1 && (

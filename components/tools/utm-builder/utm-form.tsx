@@ -213,12 +213,22 @@ function ToggleRow({
   return (
     <div className="flex items-start justify-between gap-4">
       <div>
-        <Label htmlFor={id} className="text-sm">
+        {/* The switch is a span, which <label for> does not name; aria-labelledby does. */}
+        <Label id={`${id}-label`} htmlFor={id} className="text-sm">
           {label}
         </Label>
-        <p className="mt-0.5 text-xs text-muted-foreground">{hint}</p>
+        <p id={`${id}-hint`} className="mt-0.5 text-xs text-muted-foreground">
+          {hint}
+        </p>
       </div>
-      <Switch id={id} checked={checked} onCheckedChange={onChange} className="mt-0.5" />
+      <Switch
+        id={id}
+        aria-labelledby={`${id}-label`}
+        aria-describedby={`${id}-hint`}
+        checked={checked}
+        onCheckedChange={onChange}
+        className="mt-0.5"
+      />
     </div>
   )
 }

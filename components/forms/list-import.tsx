@@ -155,6 +155,7 @@ export function FileImportField({
       <span className="text-sm font-medium">Import pliku</span>
       <input
         ref={fileRef}
+        aria-label="Wybierz plik TXT lub CSV"
         type="file"
         accept=".txt,.csv,.tsv,text/plain,text/csv"
         className="sr-only"

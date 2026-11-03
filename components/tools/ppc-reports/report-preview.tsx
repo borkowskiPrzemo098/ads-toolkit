@@ -1,6 +1,6 @@
 "use client"
 
-import { MetricBarChart } from "@/components/charts/metric-bar-chart"
+import { MetricBarChart } from "@/components/charts/lazy"
 import {
   formatCompactCurrency,
   formatCurrency,

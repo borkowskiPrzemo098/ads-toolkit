@@ -6,6 +6,7 @@ import type { SavedVariant } from "@/lib/export/budget-planner"
 import { formatMetric } from "@/lib/formatting/metric"
 import { formatCurrency, formatPercent, type Currency } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { TableScroll } from "@/components/layout/table-scroll"
 
 interface VariantsTableProps {
   variants: SavedVariant[]
@@ -35,7 +36,7 @@ export function VariantsTable({
   const money = (v: number | null) => (v === null ? "—" : formatCurrency(v, currency))
 
   return (
-    <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
+    <TableScroll label="Tabela zapisanych wariantów">
       <table className="w-full min-w-[40rem] text-sm">
         <thead>
           <tr className="border-b border-border text-xs text-muted-foreground">
@@ -126,6 +127,6 @@ export function VariantsTable({
           })}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   )
 }

@@ -12,6 +12,7 @@ import {
   type RawTable,
   type ReportField,
 } from "@/lib/reports/import"
+import { TableScroll } from "@/components/layout/table-scroll"
 
 const FIELDS: ReportField[] = [
   "date",
@@ -81,7 +82,7 @@ export function ColumnMapping({
         <p className="mb-2 text-xs font-medium text-muted-foreground">
           Podgląd pierwszych wierszy po przypisaniu
         </p>
-        <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
+        <TableScroll label="Podgląd kolumn pliku">
           <table className="w-full min-w-[36rem] text-xs">
             <thead>
               <tr className="border-b border-border text-left text-muted-foreground">
@@ -111,7 +112,7 @@ export function ColumnMapping({
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
         <p className="mt-2 text-xs text-muted-foreground tabular">
           Wierszy z danymi: {formatNumber(preview.rows.length)}
           {preview.skippedTotals > 0 &&

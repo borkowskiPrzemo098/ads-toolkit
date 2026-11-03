@@ -165,7 +165,11 @@ export function suggestNegatives(
     }
   })
 
-  if (offerStems.size > 0) addUnrelated(terms, offerStems, add)
+  if (offerStems.size > 0) {
+    // Words that already have a specific category ("praca" → jobs) are not repeated as unrelated.
+    const categorised = new Set([...builders.values()].map((b) => b.key))
+    addUnrelated(terms, offerStems, categorised, add)
+  }
 
   const suggestions: NegativeSuggestion[] = [...builders.entries()].map(([id, b]) => {
     const indexes = [...b.termIndexes].sort((x, y) => x - y)
@@ -211,6 +215,7 @@ export function suggestNegatives(
 function addUnrelated(
   terms: TermRecord[],
   offerStems: Set<string>,
+  categorised: Set<string>,
   add: (category: NegativeCategory, key: string, form: string, termIndex: number) => void
 ) {
   const relatedStems = new Set<string>()
@@ -225,7 +230,7 @@ function addUnrelated(
       const folded = stripDiacritics(word)
       if (STOPWORDS.has(folded) || folded.length < 3 || /\d/.test(folded)) continue
       const s = stem(word)
-      if (relatedStems.has(s)) continue
+      if (relatedStems.has(s) || categorised.has(s)) continue
       add("unrelated", s, word, index)
     }
   }

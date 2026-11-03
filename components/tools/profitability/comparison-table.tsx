@@ -3,6 +3,7 @@ import type { ProfitabilityResult } from "@/lib/calculations/profitability"
 import { formatDelta, formatMetric } from "@/lib/formatting/metric"
 import type { Currency } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { TableScroll } from "@/components/layout/table-scroll"
 
 interface ComparisonTableProps {
   campaigns: { name: string; result: ProfitabilityResult }[]
@@ -19,7 +20,7 @@ export function ComparisonTable({ campaigns, currency }: ComparisonTableProps) {
   const [a, b] = campaigns
 
   return (
-    <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
+    <TableScroll label="Tabela porównania kampanii">
       <table className="w-full min-w-[34rem] text-sm">
         <caption className="sr-only">
           Porównanie: {a.name} i {b.name}. Różnica to {b.name} minus {a.name}.
@@ -83,6 +84,6 @@ export function ComparisonTable({ campaigns, currency }: ComparisonTableProps) {
           })}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   )
 }

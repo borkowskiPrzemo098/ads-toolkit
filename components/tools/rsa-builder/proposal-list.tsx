@@ -87,8 +87,9 @@ export function ProposalList({
                             ? "border-success/30 bg-success/6 text-muted-foreground"
                             : "border-border bg-background/40 hover:border-[#3a4456] hover:bg-[#141925] disabled:opacity-50"
                         )}
-                        aria-label={added ? `Dodano: ${p.text}` : `Dodaj: ${p.text}`}
                       >
+                        {/* Visible text stays part of the name, so voice control can target it. */}
+                        <span className="sr-only">{added ? "Dodano: " : "Dodaj: "}</span>
                         <span className="mt-0.5 shrink-0 text-muted-foreground group-hover:text-foreground">
                           {added ? (
                             <Check className="size-4 text-success" aria-hidden="true" />
@@ -99,6 +100,7 @@ export function ProposalList({
                         <span className="min-w-0 flex-1">{p.text}</span>
                         <span className="shrink-0 text-xs text-muted-foreground tabular">
                           {p.length}/{limit}
+                          <span className="sr-only"> znaków</span>
                         </span>
                       </button>
                     </li>

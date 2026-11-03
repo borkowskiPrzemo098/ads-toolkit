@@ -28,12 +28,36 @@ export const viewport: Viewport = {
   themeColor: "#0b0d12",
 }
 
+/**
+ * Production-only CSP as a meta tag, so it also works on static hosting without headers.
+ * Everything runs locally: no external scripts, fonts or connections. Next.js inlines its
+ * bootstrap scripts, hence 'unsafe-inline' for scripts (no nonces without a server).
+ * Dev mode needs eval for React Refresh, so the policy is left out there.
+ */
+const CONTENT_SECURITY_POLICY = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "connect-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'none'",
+].join("; ")
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pl"
       className={`dark ${geistSans.variable} ${geistMono.variable} antialiased`}
     >
+      {process.env.NODE_ENV === "production" && (
+        <head>
+          <meta httpEquiv="Content-Security-Policy" content={CONTENT_SECURITY_POLICY} />
+          <meta name="referrer" content="no-referrer" />
+        </head>
+      )}
       <body className="min-h-dvh">
         <div className="flex min-h-dvh">
           <AppSidebar />

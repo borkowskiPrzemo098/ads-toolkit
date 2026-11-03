@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { BookmarkPlus, Info, RotateCcw } from "lucide-react"
-import { ProfitCurveChart } from "@/components/charts/profit-curve-chart"
+import { ProfitCurveChart } from "@/components/charts/lazy"
 import { ExportButtons } from "@/components/export/export-buttons"
 import { NumberField } from "@/components/forms/number-field"
 import { SegmentedControl } from "@/components/forms/segmented-control"

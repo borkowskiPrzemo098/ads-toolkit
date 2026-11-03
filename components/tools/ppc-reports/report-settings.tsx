@@ -141,6 +141,7 @@ export function ReportSettingsFields({
             )}
             <input
               ref={fileRef}
+              aria-label="Wybierz plik z logo"
               type="file"
               accept="image/png,image/jpeg"
               className="sr-only"

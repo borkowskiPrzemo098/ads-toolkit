@@ -7,6 +7,7 @@ import { formatMetric } from "@/lib/formatting/metric"
 import type { Currency } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
 import type { ScenarioField, ScenarioForm } from "@/lib/validators/budget-planner"
+import { TableScroll } from "@/components/layout/table-scroll"
 
 interface ScenarioTableProps {
   forms: Record<ScenarioId, ScenarioForm>
@@ -25,7 +26,7 @@ export function ScenarioTable({
   currency,
 }: ScenarioTableProps) {
   return (
-    <div className="-mx-5 overflow-x-auto px-5 sm:-mx-6 sm:px-6">
+    <TableScroll label="Tabela scenariuszy">
       <table className="w-full min-w-[34rem] text-sm">
         <caption className="sr-only">
           Założenia i prognoza dla scenariuszy: ostrożnego, realistycznego i
@@ -129,6 +130,6 @@ export function ScenarioTable({
           jako 0%.
         </p>
       )}
-    </div>
+    </TableScroll>
   )
 }

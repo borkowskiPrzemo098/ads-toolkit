@@ -155,6 +155,7 @@ export function PeriodSource({ data, onChange, currency, emptyHint }: PeriodSour
           <p className="text-sm text-muted-foreground">{emptyHint}</p>
           <input
             ref={fileRef}
+            aria-label="Wybierz plik CSV z raportem"
             type="file"
             accept=".csv,.tsv,.txt,text/csv"
             className="sr-only"

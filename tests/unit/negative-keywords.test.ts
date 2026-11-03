@@ -137,6 +137,19 @@ describe("suggestNegatives: user lists", () => {
     expect(unrelated.flatMap((s) => s.forms).sort()).toEqual(["kurtka", "zimowa"])
   })
 
+  it("does not repeat a categorised word as unrelated", () => {
+    const analysis = suggestNegatives([t("praca w sklepie"), t("buty damskie")], {
+      offerWords: ["buty"],
+    })
+    const withPraca = analysis.suggestions.filter((s) => s.forms.includes("praca"))
+    expect(withPraca.map((s) => s.category)).toEqual(["jobs"])
+    expect(
+      analysis.suggestions.some(
+        (s) => s.category === "unrelated" && s.forms.includes("sklepie")
+      )
+    ).toBe(true)
+  })
+
   it("does not suggest unrelated words without an offer list", () => {
     const analysis = suggestNegatives([t("kurtka zimowa")])
     expect(analysis.suggestions).toEqual([])

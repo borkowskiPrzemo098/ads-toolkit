@@ -26,8 +26,11 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
    w wynikach. CSV: limit rozmiaru, ochrona przed formułami przy eksporcie (`= + - @`),
    nigdy `dangerouslySetInnerHTML` z danych użytkownika.
 7. Nie instaluj bibliotek, zanim etap ich nie wymaga.
-8. Po każdym etapie: `npm run check` i `npm run build`, podgląd desktop + telefon,
+8. Po każdym etapie: `npm run check` i `npm run test:e2e`, podgląd desktop + telefon,
    aktualizacja README, podsumowanie zrobionego i otwartych problemów.
+9. Nowe narzędzie lub widok: dopisz trasę do `tests/e2e/smoke.spec.ts` i scenariusz do
+   `tools.spec.ts`. Wykresy importuj z `components/charts/lazy`, szerokie tabele owijaj
+   w `TableScroll`. Nowe zasoby zewnętrzne wymagają zmiany CSP w `app/layout.tsx`.
 
 ## Design system
 

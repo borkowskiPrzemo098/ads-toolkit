@@ -22,7 +22,23 @@ npm run dev        # http://localhost:3000
 | `npm run lint`      | ESLint (konfiguracja Next.js)                 |
 | `npm test`          | testy jednostkowe Vitest                      |
 | `npm run check`     | typecheck + lint + testy                      |
+| `npm run test:e2e`  | build + testy E2E Playwright (port 3420)      |
 | `npm run format`    | Prettier z sortowaniem klas Tailwind          |
+
+Testy E2E (`tests/e2e/`) uruchamiają build produkcyjny. Przy pierwszym uruchomieniu
+zainstaluj przeglądarki: `npx playwright install chromium webkit firefox`.
+
+- `smoke.spec.ts` (tag `@smoke`): każda trasa w Chromium, Pixel 7, WebKit i Firefox:
+  nagłówek, tytuł, brak poziomego przewijania, axe WCAG 2.1 AA (błędy serious/critical),
+  brak błędów konsoli, nawigacja, strona 404.
+- `tools.spec.ts` (Chromium): jeden pełny scenariusz na narzędzie z wartościami
+  sprawdzonymi w testach jednostkowych, zakończony eksportem (CSV, TXT, PDF). Po każdym
+  scenariuszu ponowny audyt axe z wynikami na ekranie i brak błędów konsoli (wyłapuje też
+  blokady CSP).
+
+Znany problem: na stacji, na której powstał projekt, Playwright nie uruchamia Firefoksa
+(`browserType.launch: spawn UNKNOWN`, sam plik firefox.exe działa). Chromium, Pixel 7
+i WebKit przechodzą; projekt `firefox` uruchom na innej maszynie lub w CI.
 
 ## Stos
 
@@ -61,6 +77,7 @@ lib/
 hooks/                  hooki klienckie
 types/                  typy współdzielone (CalcResult, ToolMeta)
 tests/unit/             testy Vitest
+tests/e2e/              testy Playwright (smoke na 4 silnikach, scenariusze narzędzi)
 ```
 
 `lib/utils` jest plikiem, nie katalogiem: shadcn/ui importuje `@/lib/utils`.
@@ -99,6 +116,15 @@ tests/unit/             testy Vitest
 - Pola liczbowe przyjmują `12,5` i `12.5` (`parseDecimal`).
 - localStorage przechowuje wyłącznie licznik odwiedzin narzędzi (sekcja „Najczęściej
   używasz”). Nigdy dane kampanii.
+- Bezpieczeństwo: build produkcyjny ma CSP w znaczniku meta (`app/layout.tsx`, działa też
+  na hostingu statycznym): tylko własne zasoby, `connect-src 'self'`, `object-src 'none'`,
+  `form-action 'none'`, oraz `referrer: no-referrer`. `'unsafe-inline'` dla skryptów
+  wynika z inline'owych skryptów Next.js (nonce wymaga serwera). Brak
+  `dangerouslySetInnerHTML`, `eval` i zapytań poza własne fonty PDF. `npm audit --omit=dev`:
+  0 podatności (zgłoszenia dotyczą tylko narzędzi deweloperskich: ESLint, CLI shadcn).
+- Wydajność: jsPDF i Recharts ładują się osobno, dopiero gdy są potrzebne
+  (`components/charts/lazy.tsx`). Startowy JS: ok. 220–240 KB gzip na trasę.
+- Szerokie tabele: `TableScroll` (fokusowalny region, przewijanie strzałkami).
 
 ## Status etapów
 
@@ -114,5 +140,5 @@ tests/unit/             testy Vitest
 | 7    | Kreator reklam RSA           | gotowy       |
 | 8    | Kalkulator testów A/B        | gotowy       |
 | 9    | Generator raportów PPC       | gotowy       |
-| 10   | Testy i optymalizacja        | do zrobienia |
+| 10   | Testy i optymalizacja        | gotowy       |
 | 11   | Publikacja                   | do zrobienia |
