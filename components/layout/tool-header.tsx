@@ -11,7 +11,12 @@ interface ToolHeaderProps {
 
 export function ToolHeader({ tool, actions }: ToolHeaderProps) {
   return (
-    <header className="mb-8">
+    <header className="relative mb-8">
+      {/* Neon pool in the tool's hue behind the title: the page's colour signature. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -top-28 -left-24 -z-10 h-72 w-[34rem] max-w-[90vw] rounded-full bg-(--tool) opacity-[0.16] blur-[90px]"
+      />
       <nav
         aria-label="Ścieżka"
         className="mb-5 flex items-center gap-1 text-sm text-muted-foreground"
@@ -20,11 +25,11 @@ export function ToolHeader({ tool, actions }: ToolHeaderProps) {
           Panel główny
         </Link>
         <ChevronRight className="size-3.5" aria-hidden="true" />
-        <span className="text-foreground">{tool.name}</span>
+        <span className="font-medium text-(--tool)">{tool.name}</span>
       </nav>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-start gap-4">
-          <ToolIcon icon={tool.icon} size="lg" solid />
+          <ToolIcon icon={tool.icon} hue={tool.hue} size="lg" solid />
           <div>
             <h1 className="text-2xl font-semibold tracking-tight sm:text-[1.75rem]">
               {tool.name}

@@ -42,6 +42,12 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
 - Tokeny w `app/globals.css` (`:root`). Paleta ze specyfikacji, aplikacja tylko ciemna
   (`class="dark"` na `<html>`).
 - Akcent #7C6CFF zawsze z ciemnym tekstem (`text-primary-foreground`); biały ma 3,9:1.
+- Neon: każde narzędzie ma `hue` w `constants/tools.ts`, strona ustawia `--tool`
+  (ikona, poświata nagłówka, krawędź paneli, menu, wartości KPI). Paleta `--neon-*`
+  w `globals.css`, serie wykresów w `constants/neon.ts`. Narzędzia: `glow`,
+  `glow-strong`, `neon-text` (nie `text-*`: tailwind-merge w `cn` zjada kolor tekstu).
+  Wykresy słupkowe: `components/charts/neon-bars.tsx` (od zera, wartość przy słupku,
+  tabela sr-only). Tło: neonowa zorza na `body`.
 - Font Geist; liczby w wynikach z klasą `tabular`.
 - Zaokrąglenia: pola i przyciski 10 px, panele i kafle 14 px.
 - Ruch tylko jako stan: 150–200 ms, `ease-out-quart`, bez animacji wejścia stron.

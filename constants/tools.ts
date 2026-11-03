@@ -19,6 +19,7 @@ export const TOOLS: ToolMeta[] = [
       "CPC, CPA, ROAS i ROI w jednym miejscu, z zyskiem po marży i kosztach produktu.",
     question: "Czy ta kampania naprawdę zarabia?",
     icon: TrendingUp,
+    hue: "#2EF2A0",
     featured: true,
     outputs: [
       "CPC, CPA, ROAS i ROI, liczone osobno",
@@ -33,6 +34,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Prognoza kliknięć, konwersji i zysku dla wybranego budżetu.",
     question: "Co realnie kupię za ten budżet?",
     icon: Wallet,
+    hue: "#36D6FF",
     outputs: [
       "Szacowane kliknięcia, konwersje, przychód i zysk",
       "Budżet dzienny i tygodniowy",
@@ -47,6 +49,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Porządkuje długie listy fraz: duplikaty, grupy, intencja.",
     question: "Co jest w mojej liście słów kluczowych?",
     icon: ListTree,
+    hue: "#5B8CFF",
     outputs: [
       "Lista bez duplikatów i niemal identycznych fraz",
       "Grupy według podobieństwa i długości frazy",
@@ -61,6 +64,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Sugestie wykluczeń z raportu wyszukiwanych haseł, do akceptacji.",
     question: "Na jakie zapytania przepalam budżet?",
     icon: Ban,
+    hue: "#FF4F8B",
     outputs: [
       "Sugestie pogrupowane: darmowe, praca, używane, poradniki i inne",
       "Akceptacja lub odrzucenie każdej sugestii",
@@ -74,6 +78,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Poprawnie zakodowane linki z parametrami UTM, także hurtowo.",
     question: "Skąd naprawdę przychodzą moi klienci?",
     icon: Link2,
+    hue: "#FFC23D",
     outputs: [
       "Gotowy link z zachowaniem istniejących parametrów",
       "Edytowalne szablony dla Google Ads, Facebooka i mailingu",
@@ -86,6 +91,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Nagłówki i teksty z licznikiem znaków, podglądem i przypinaniem.",
     question: "Czy moja reklama RSA mieści się w limitach?",
     icon: PenLine,
+    hue: "#C17BFF",
     outputs: [
       "Propozycje z biblioteki formuł reklamowych",
       "Licznik znaków: 30 dla nagłówka, 90 dla tekstu",
@@ -99,6 +105,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Test dwóch proporcji z przedziałem ufności i interpretacją.",
     question: "Czy wariant B jest naprawdę lepszy?",
     icon: FlaskConical,
+    hue: "#FF8A3D",
     outputs: [
       "Współczynnik konwersji i CPA obu wariantów",
       "Różnica bezwzględna i względna",
@@ -112,6 +119,7 @@ export const TOOLS: ToolMeta[] = [
     description: "Raport dla klienta z eksportu CSV: KPI, wykresy, wnioski, PDF.",
     question: "Jak pokazać klientowi wyniki w 10 minut?",
     icon: FileChartColumn,
+    hue: "#8B7BFF",
     featured: true,
     outputs: [
       "KPI i porównanie dwóch okresów",

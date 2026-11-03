@@ -23,7 +23,9 @@ export function Panel({
   return (
     <Tag
       className={cn(
-        "rounded-xl border border-border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.3),0_8px_24px_-12px_rgb(0_0_0/0.5)]",
+        "relative rounded-xl border border-border bg-card shadow-[0_1px_2px_rgb(0_0_0/0.3),0_8px_24px_-12px_rgb(0_0_0/0.5)]",
+        // Lit top edge in the tool's hue.
+        "before:pointer-events-none before:absolute before:inset-x-8 before:-top-px before:h-px before:bg-linear-to-r before:from-transparent before:via-(--tool) before:to-transparent before:opacity-70",
         className
       )}
     >

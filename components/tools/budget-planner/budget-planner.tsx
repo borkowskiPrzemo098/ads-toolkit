@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react"
 import { BookmarkPlus, Info, RotateCcw } from "lucide-react"
 import { ProfitCurveChart } from "@/components/charts/lazy"
+import { NeonBars } from "@/components/charts/neon-bars"
 import { ExportButtons } from "@/components/export/export-buttons"
 import { NumberField } from "@/components/forms/number-field"
 import { SegmentedControl } from "@/components/forms/segmented-control"
@@ -322,6 +323,39 @@ export function BudgetPlanner() {
               forecasts={forecasts}
               currency={currency}
             />
+            {SCENARIOS.every((sc) => forecasts[sc.id].revenue.ok) && (
+              <div className="mt-6 grid gap-6 border-t border-border pt-5 md:grid-cols-2">
+                {(
+                  [
+                    ["conversions", "Konwersje", (v: number) => formatNumber(v, 1)],
+                    [
+                      "revenue",
+                      "Przychód",
+                      (v: number) => formatCurrency(v, currency, 0),
+                    ],
+                  ] as const
+                ).map(([key, title, format]) => (
+                  <div key={key}>
+                    <h3 className="mb-3 text-sm font-semibold">
+                      {title} w scenariuszach
+                    </h3>
+                    <NeonBars
+                      caption={`${title} w trzech scenariuszach`}
+                      bars={SCENARIOS.map((sc) => {
+                        const r = forecasts[sc.id][key]
+                        const value = r.ok ? r.value : 0
+                        return {
+                          label: sc.label,
+                          value,
+                          display: format(value),
+                          color: sc.color,
+                        }
+                      })}
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
           </Panel>
 
           <Panel

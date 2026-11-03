@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { Info, RotateCcw, Search } from "lucide-react"
+import { NeonBars } from "@/components/charts/neon-bars"
 import { ExportButtons } from "@/components/export/export-buttons"
 import { SegmentedControl } from "@/components/forms/segmented-control"
 import { SelectField } from "@/components/forms/select-field"
@@ -14,8 +15,10 @@ import {
   DECISION_FILTER_OPTIONS,
   MATCH_TYPE_HINT,
   MATCH_TYPE_OPTIONS,
+  NEGATIVE_CATEGORIES,
   type DecisionFilter,
 } from "@/constants/negative-keywords"
+import { NEON_SERIES } from "@/constants/neon"
 import { TOOL_BY_SLUG } from "@/constants/tools"
 import { splitKeywordText } from "@/lib/calculations/keyword-analyzer"
 import {
@@ -110,6 +113,21 @@ export function NegativeKeywords() {
     const terms = new Set(accepted.flatMap((s) => s.termIndexes))
     return [...terms].reduce((sum, i) => sum + (analysis.terms[i].cost ?? 0), 0)
   }, [analysis, accepted])
+
+  // Per category: how many search terms it covers, and their cost when the import had metrics.
+  const byCategory = useMemo(() => {
+    if (!analysis) return []
+    return NEGATIVE_CATEGORIES.flatMap((c) => {
+      const terms = new Set(
+        analysis.suggestions
+          .filter((s) => s.category === c.id)
+          .flatMap((s) => s.termIndexes)
+      )
+      if (!terms.size) return []
+      const cost = [...terms].reduce((sum, i) => sum + (analysis.terms[i].cost ?? 0), 0)
+      return [{ id: c.id, label: c.label, terms: terms.size, cost }]
+    })
+  }, [analysis])
 
   const NEW_DECISION: SuggestionDecision = { status: "pending", matchType: null }
 
@@ -215,6 +233,32 @@ export function NegativeKeywords() {
               )}
             </dl>
 
+            {byCategory.length > 0 && (
+              <Panel
+                title={
+                  analysis.stats.hasMetrics
+                    ? "Koszt zapytań według kategorii"
+                    : "Zapytania według kategorii"
+                }
+                description="Ile zapytań obejmują sugestie z każdej kategorii. Jedno zapytanie może trafić do kilku kategorii."
+              >
+                <NeonBars
+                  caption="Zapytania objęte sugestiami w każdej kategorii"
+                  bars={byCategory.map((c, i) => ({
+                    label: c.label,
+                    value: analysis.stats.hasMetrics ? c.cost : c.terms,
+                    display: analysis.stats.hasMetrics
+                      ? formatCurrency(c.cost, currency)
+                      : formatNumber(c.terms),
+                    note: analysis.stats.hasMetrics
+                      ? `${formatNumber(c.terms)} zapyt.`
+                      : undefined,
+                    color: NEON_SERIES[(i + 2) % NEON_SERIES.length],
+                  }))}
+                />
+              </Panel>
+            )}
+
             <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,22rem)]">
               <Panel title="Sugestie wykluczeń">
                 <div className="mb-6 grid gap-3 md:grid-cols-[minmax(0,1fr)_11rem]">
@@ -303,7 +347,7 @@ function Stat({
       <dd
         className={
           accent
-            ? "mt-1 text-2xl font-semibold tracking-tight text-success tabular"
+            ? "mt-1 text-2xl font-semibold tracking-tight text-(--tool) tabular neon-text"
             : "mt-1 text-2xl font-semibold tracking-tight tabular"
         }
       >

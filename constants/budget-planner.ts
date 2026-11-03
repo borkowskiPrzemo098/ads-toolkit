@@ -44,9 +44,9 @@ export interface ScenarioMeta {
 }
 
 export const SCENARIOS: ScenarioMeta[] = [
-  { id: "pessimistic", label: "Ostrożny", color: "#d55181", dash: "6 4" },
-  { id: "realistic", label: "Realistyczny", color: "#7c6cff" },
-  { id: "optimistic", label: "Optymistyczny", color: "#c98500", dash: "2 4" },
+  { id: "pessimistic", label: "Ostrożny", color: "#ff4f8b", dash: "6 4" },
+  { id: "realistic", label: "Realistyczny", color: "#36d6ff" },
+  { id: "optimistic", label: "Optymistyczny", color: "#2ef2a0", dash: "2 4" },
 ]
 
 export const SCENARIO_FIELDS: { key: ScenarioField; label: string }[] = [

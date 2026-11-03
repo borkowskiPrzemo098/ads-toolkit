@@ -142,7 +142,9 @@ export function ProfitCurveChart({
                 dataKey={s.id}
                 type="monotone"
                 stroke={s.color}
-                strokeWidth={2}
+                strokeWidth={2.25}
+                // Neon: the line glows in its own colour.
+                style={{ filter: `drop-shadow(0 0 5px ${s.color})` }}
                 strokeDasharray={s.dash}
                 dot={false}
                 activeDot={{ r: 4, strokeWidth: 2, stroke: "#121620" }}

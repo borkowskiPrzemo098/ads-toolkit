@@ -26,8 +26,8 @@ export function VariantCard(props: VariantCardProps) {
       <div className="mb-5 flex items-center gap-3">
         <span
           aria-hidden="true"
-          className="grid size-9 shrink-0 place-items-center rounded-lg text-sm font-semibold text-[#0b0d12]"
-          style={{ background: color }}
+          className="grid size-9 shrink-0 place-items-center rounded-lg text-sm font-semibold text-[#0b0d12] glow"
+          style={{ background: color, "--glow": color } as React.CSSProperties}
         >
           {letter}
         </span>

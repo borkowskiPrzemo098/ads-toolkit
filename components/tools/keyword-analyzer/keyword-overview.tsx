@@ -1,5 +1,7 @@
 "use client"
 
+import { NeonBars } from "@/components/charts/neon-bars"
+import { NEON_SERIES } from "@/constants/neon"
 import {
   CATEGORY_LABEL,
   CATEGORY_ORDER,
@@ -23,8 +25,8 @@ export function KeywordOverview({
   onFiltersChange,
 }: KeywordOverviewProps) {
   const counters = [
-    { label: "Fraz na liście", value: stats.analyzed },
-    { label: "Unikalnych", value: stats.unique },
+    { label: "Fraz na liście", value: stats.analyzed, color: "var(--tool)" },
+    { label: "Unikalnych", value: stats.unique, color: "var(--neon-cyan)" },
     {
       label: "Duplikatów",
       value: stats.duplicates,
@@ -35,8 +37,9 @@ export function KeywordOverview({
       value: stats.nearDuplicates,
       tone: stats.nearDuplicates > 0 ? "warn" : undefined,
     },
-    { label: "Bardzo ogólnych", value: stats.generic },
+    { label: "Bardzo ogólnych", value: stats.generic, color: "var(--neon-violet)" },
   ] as const
+  const categories = CATEGORY_ORDER.filter((c) => stats.byCategory[c])
 
   return (
     <div className="flex flex-col gap-5">
@@ -48,10 +51,12 @@ export function KeywordOverview({
           >
             <dt className="text-xs text-muted-foreground">{c.label}</dt>
             <dd
+              style={"color" in c ? { color: c.color } : undefined}
               className={cn(
-                "mt-1 text-2xl font-semibold tracking-tight tabular",
+                "mt-1 text-2xl font-semibold tracking-tight tabular neon-text",
                 "tone" in c && c.tone === "bad" && "text-destructive",
-                "tone" in c && c.tone === "warn" && "text-warning"
+                "tone" in c && c.tone === "warn" && "text-warning",
+                "tone" in c && !c.tone && "text-foreground [text-shadow:none]"
               )}
             >
               {formatNumber(c.value)}
@@ -66,6 +71,21 @@ export function KeywordOverview({
           {stats.overLimit > 0 &&
             `${formatNumber(stats.overLimit)} fraz ponad limit nie zostało przeanalizowanych; podziel listę.`}
         </p>
+      )}
+
+      {categories.length > 1 && (
+        <div className="rounded-xl border border-border bg-card px-4 py-4 sm:px-5">
+          <h3 className="mb-3.5 text-sm font-semibold">Frazy według kategorii</h3>
+          <NeonBars
+            caption="Liczba fraz w każdej kategorii (sugestia na podstawie słów we frazie)"
+            bars={categories.map((c, i) => ({
+              label: CATEGORY_LABEL[c],
+              value: stats.byCategory[c] ?? 0,
+              display: formatNumber(stats.byCategory[c] ?? 0),
+              color: NEON_SERIES[i % NEON_SERIES.length],
+            }))}
+          />
+        </div>
       )}
 
       <div className="flex flex-col gap-3">

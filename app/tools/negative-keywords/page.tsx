@@ -14,9 +14,10 @@ export const metadata: Metadata = {
 
 export default function Page() {
   return (
-    <>
+    // --tool tints the icon, header glow and panel edges with this tool's neon hue.
+    <div style={{ "--tool": tool.hue } as React.CSSProperties}>
       <RecordVisit slug="negative-keywords" />
       <NegativeKeywords />
-    </>
+    </div>
   )
 }

@@ -24,15 +24,26 @@ export function KpiTile({
   meter,
 }: KpiTileProps) {
   return (
-    <div className="flex min-w-0 flex-col rounded-xl border border-border bg-card p-4">
+    <div
+      className={cn(
+        "relative flex min-w-0 flex-col overflow-hidden rounded-xl border border-border bg-card p-4",
+        // Lit top edge: the tool's hue, or the verdict colour when the value has one.
+        "before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-0.5 before:bg-linear-to-r before:from-transparent before:via-(--edge) before:to-transparent",
+        "[--edge:var(--tool)]",
+        tone === "good" && "[--edge:var(--success)]",
+        tone === "bad" && "[--edge:var(--destructive)]"
+      )}
+    >
       <p className="text-xs font-medium text-muted-foreground">{label}</p>
       {result.ok ? (
         <>
           <p
             className={cn(
               "mt-1.5 truncate text-[1.375rem] font-semibold tracking-tight tabular sm:text-2xl",
-              tone === "good" && "text-success",
-              tone === "bad" && "text-destructive"
+              // Values without a verdict take the tool's hue, so the result row is never grey.
+              !tone && "text-(--tool) neon-text",
+              tone === "good" && "text-success neon-text",
+              tone === "bad" && "text-destructive neon-text"
             )}
           >
             {format(result.value)}
@@ -80,7 +91,9 @@ function ThresholdMeter({ value, threshold }: { value: number; threshold: number
       <div
         className={cn(
           "absolute inset-y-0 left-0 rounded-full",
-          value >= threshold ? "bg-success" : "bg-destructive"
+          value >= threshold
+            ? "bg-success shadow-[0_0_10px_var(--success)]"
+            : "bg-destructive shadow-[0_0_10px_var(--destructive)]"
         )}
         style={{ width: `${fill}%` }}
       />

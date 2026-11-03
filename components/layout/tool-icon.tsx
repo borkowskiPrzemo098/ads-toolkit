@@ -9,26 +9,35 @@ const SIZES = {
 
 interface ToolIconProps {
   icon: LucideIcon
+  /** The tool's neon hue; falls back to the page's --tool. */
+  hue?: string
   size?: keyof typeof SIZES
-  /** Solid accent tile for featured tools and page headers. */
+  /** Solid glowing tile for featured tools and page headers. */
   solid?: boolean
   className?: string
 }
 
-export function ToolIcon({ icon: Icon, size = "md", solid, className }: ToolIconProps) {
+export function ToolIcon({
+  icon: Icon,
+  hue,
+  size = "md",
+  solid,
+  className,
+}: ToolIconProps) {
   return (
     <span
       aria-hidden="true"
+      style={hue ? ({ "--glow": hue, "--hue": hue } as React.CSSProperties) : undefined}
       className={cn(
-        "grid shrink-0 place-items-center",
+        "grid shrink-0 place-items-center [--hue:var(--tool)]",
         SIZES[size],
         solid
-          ? "bg-primary text-primary-foreground"
-          : "bg-primary/12 text-[#a89dff] ring-1 ring-primary/20 ring-inset",
+          ? "bg-(--hue) bg-linear-to-br from-white/25 to-transparent text-[#0b0d12] glow"
+          : "bg-[color-mix(in_oklab,var(--hue)_14%,transparent)] text-(--hue) ring-1 ring-[color-mix(in_oklab,var(--hue)_35%,transparent)] ring-inset",
         className
       )}
     >
-      <Icon strokeWidth={1.75} />
+      <Icon strokeWidth={solid ? 2 : 1.75} />
     </span>
   )
 }

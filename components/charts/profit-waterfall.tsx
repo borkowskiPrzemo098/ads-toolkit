@@ -20,12 +20,13 @@ interface Step {
   tone: "revenue" | "cost" | "ads" | "profit" | "loss"
 }
 
+/** Neon per step: money in (cyan), costs (pink/violet), result (mint or red). */
 const TONE = {
-  revenue: "bg-[#c9cfdb]",
-  cost: "bg-[#4a5466]",
-  ads: "bg-primary",
-  profit: "bg-success",
-  loss: "bg-destructive",
+  revenue: "[--bar:var(--neon-cyan)]",
+  cost: "[--bar:var(--neon-pink)]",
+  ads: "[--bar:var(--primary)]",
+  profit: "[--bar:var(--neon-mint)]",
+  loss: "[--bar:var(--destructive)]",
 }
 
 /**
@@ -95,13 +96,16 @@ export function ProfitWaterfall(props: ProfitWaterfallProps) {
               <div key={step.label} className="group relative">
                 <div
                   className={cn(
-                    "absolute inset-x-1 rounded-[4px] transition-opacity duration-150 group-hover:opacity-85 sm:inset-x-3",
+                    "absolute inset-x-1 rounded-md bg-linear-to-t from-[color-mix(in_oklab,var(--bar)_55%,transparent)] to-(--bar) shadow-[0_0_22px_-4px_var(--bar)] transition-[filter] duration-150 group-hover:brightness-110 sm:inset-x-3",
                     TONE[step.tone]
                   )}
                   style={{ bottom: `${bottom}%`, height: `${height}%` }}
                 />
                 <span
-                  className="absolute inset-x-0 text-center text-[11px] font-medium text-foreground tabular sm:text-xs"
+                  className={cn(
+                    "absolute inset-x-0 text-center text-[11px] font-semibold text-(--bar) tabular sm:text-xs",
+                    TONE[step.tone]
+                  )}
                   style={
                     negative
                       ? { top: `calc(${100 - bottom}% + 4px)` }

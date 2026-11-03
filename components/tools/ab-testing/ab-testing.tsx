@@ -36,7 +36,8 @@ import {
 } from "@/lib/validators/ab-test"
 import { VariantCard } from "./variant-card"
 
-const COLORS = { a: "#c9cfdb", b: "#7c6cff" }
+// A cyan, B orange (the tool hue): far apart in hue and lightness, readable for colour-blind users.
+const COLORS = { a: "#36d6ff", b: "#ff8a3d" }
 const DEFAULT_NAMES = { a: "Wariant A", b: "Wariant B" }
 const FILE_BASE = "test-ab"
 

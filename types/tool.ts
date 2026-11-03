@@ -21,6 +21,8 @@ export interface ToolMeta {
   /** The question this tool answers for the user. */
   question: string
   icon: LucideIcon
+  /** Neon identity colour: icon tile, header glow, nav, panel edges. Always used with dark text. */
+  hue: string
   featured?: boolean
   /** What the tool produces; listed on the featured dashboard tiles. */
   outputs: string[]

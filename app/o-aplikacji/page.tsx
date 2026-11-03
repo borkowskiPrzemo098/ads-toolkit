@@ -25,7 +25,7 @@ export default function Page() {
               key={tool.slug}
               className="flex items-start gap-3 border-b border-border py-3 last:border-0"
             >
-              <ToolIcon icon={tool.icon} size="sm" />
+              <ToolIcon icon={tool.icon} hue={tool.hue} size="sm" />
               <div>
                 <Link href={toolHref(tool.slug)}>{tool.name}</Link>
                 <p className="mt-0.5 text-sm text-muted-foreground">{tool.question}</p>

@@ -26,20 +26,30 @@ export function RateIntervals({ rows }: { rows: Row[] }) {
                 {pct(row.value)} (95%: {pct(row.interval.low)}–{pct(row.interval.high)})
               </span>
             </div>
-            <div className="relative h-6" aria-hidden="true">
-              <div className="absolute inset-x-0 top-1/2 h-px bg-[#252d3a]" />
+            {/* Glowing bar = conversion rate from zero; the whisker on it = 95% interval. */}
+            <div
+              className="relative h-7 rounded-md bg-[#1a202c]"
+              style={{ "--bar": row.color } as React.CSSProperties}
+              aria-hidden="true"
+            >
               <div
-                className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full opacity-45"
+                className="absolute inset-y-0 left-0 rounded-md bg-linear-to-r from-[color-mix(in_oklab,var(--bar)_40%,transparent)] to-(--bar) shadow-[0_0_20px_-4px_var(--bar)]"
+                style={{ width: pos(row.value) }}
+              />
+              <div
+                className="absolute top-1/2 h-0.5 -translate-y-1/2 bg-[#f4f6fa]/85"
                 style={{
                   left: pos(row.interval.low),
                   width: `calc(${pos(row.interval.high)} - ${pos(row.interval.low)})`,
-                  background: row.color,
                 }}
               />
-              <div
-                className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-card"
-                style={{ left: pos(row.value), background: row.color }}
-              />
+              {[row.interval.low, row.interval.high].map((v, i) => (
+                <div
+                  key={i}
+                  className="absolute top-1/2 h-3.5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#f4f6fa]/85"
+                  style={{ left: pos(v) }}
+                />
+              ))}
             </div>
           </li>
         ))}
@@ -87,14 +97,14 @@ export function DifferenceInterval({
         <div className="absolute inset-x-0 top-1/2 h-px bg-[#252d3a]" />
         <div className="absolute inset-y-0 w-px bg-[#929bac]" style={{ left: pos(0) }} />
         <div
-          className={`absolute top-1/2 h-2 -translate-y-1/2 rounded-full ${crossesZero ? "bg-[#4a5466]" : "bg-primary/60"}`}
+          className={`absolute top-1/2 h-2 -translate-y-1/2 rounded-full ${crossesZero ? "bg-[#4a5466]" : "bg-(--tool)/60 shadow-[0_0_14px_var(--tool)]"}`}
           style={{
             left: pos(interval.low),
             width: `calc(${pos(interval.high)} - ${pos(interval.low)})`,
           }}
         />
         <div
-          className={`absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-card ${crossesZero ? "bg-[#929bac]" : "bg-primary"}`}
+          className={`absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-card ${crossesZero ? "bg-[#929bac]" : "bg-(--tool)"}`}
           style={{ left: pos(diff) }}
         />
       </div>
