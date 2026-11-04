@@ -8,6 +8,7 @@ import {
   type UnwantedCategory,
 } from "../intent"
 import { addInto, emptyMetrics, kpisOf, sumMetrics, type Metrics } from "../metrics"
+import type { AuditDataset } from "../join"
 import { nameKey, type NormalizedReport } from "../normalize"
 import { clicksToJudge } from "../stats"
 import { T } from "../thresholds"
@@ -64,36 +65,40 @@ export function pickSearchTermReport(ctx: RuleContext): NormalizedReport | null 
   )
 }
 
-export function analyzeSearchTerms(
-  ctx: RuleContext,
-  intentCtx: IntentContext
-): SearchTermAnalysis | null {
-  const report = pickSearchTermReport(ctx)
-  if (!report) return null
-  const { money, data } = ctx
+type BaseRow = Omit<TermRow, "intent" | "suggestion" | "reason">
 
+const aggregateCache = new WeakMap<
+  AuditDataset,
+  { report: NormalizedReport; rows: BaseRow[]; totals: Metrics }
+>()
+
+/** Terms merged across ad groups with summed metrics. Independent of the offer words. */
+function aggregateTerms(data: AuditDataset, report: NormalizedReport) {
+  const cached = aggregateCache.get(data)
+  if (cached?.report === report) return cached
   // Existing keywords: from this report's keyword column and from any keyword report.
   const keywordSet = new Set<string>()
   for (const r of data.reports)
     for (const rec of r.records)
       if (rec.dims.keyword) keywordSet.add(nameKey(rec.dims.keyword))
 
-  const map = new Map<string, TermRow>()
+  const map = new Map<string, BaseRow>()
   for (const rec of report.records) {
     const term = rec.dims.searchTerm
     if (!term) continue
     const key = nameKey(term)
-    const row = map.get(key) ?? {
-      key,
-      term,
-      campaigns: [],
-      adGroups: [],
-      keywords: [],
-      isKeyword: keywordSet.has(key),
-      metrics: emptyMetrics(),
-      intent: classifyTerm(term, intentCtx),
-      suggestion: null,
-      reason: "",
+    let row = map.get(key)
+    if (!row) {
+      row = {
+        key,
+        term,
+        campaigns: [],
+        adGroups: [],
+        keywords: [],
+        isKeyword: keywordSet.has(key),
+        metrics: emptyMetrics(),
+      }
+      map.set(key, row)
     }
     addInto(row.metrics, rec.metrics)
     if (rec.dims.campaign && !row.campaigns.includes(rec.dims.campaign))
@@ -102,12 +107,32 @@ export function analyzeSearchTerms(
       row.adGroups.push(rec.dims.adGroup)
     if (rec.dims.keyword && !row.keywords.includes(rec.dims.keyword))
       row.keywords.push(rec.dims.keyword)
-    map.set(key, row)
   }
   const rows = [...map.values()].sort(
     (a, b) => (b.metrics.cost ?? 0) - (a.metrics.cost ?? 0)
   )
-  const totals = sumMetrics(rows.map((r) => r.metrics))
+  const entry = { report, rows, totals: sumMetrics(rows.map((r) => r.metrics)) }
+  aggregateCache.set(data, entry)
+  return entry
+}
+
+export function analyzeSearchTerms(
+  ctx: RuleContext,
+  intentCtx: IntentContext
+): SearchTermAnalysis | null {
+  const report = pickSearchTermReport(ctx)
+  if (!report) return null
+  const { money, data } = ctx
+
+  const { rows: aggregated, totals } = aggregateTerms(data, report)
+  // Fresh rows per run (intent and suggestion change with the offer words); the heavy
+  // aggregation above is cached per dataset.
+  const rows: TermRow[] = aggregated.map((r) => ({
+    ...r,
+    intent: classifyTerm(r.term, intentCtx),
+    suggestion: null,
+    reason: "",
+  }))
   const base = baselineOf(totals)
   const minClicks = base.cr ? clicksToJudge(base.cr) : Infinity
 
