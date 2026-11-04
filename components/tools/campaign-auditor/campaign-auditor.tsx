@@ -11,6 +11,7 @@ import { normalizeReport } from "@/lib/auditor/normalize"
 import { formatNumber } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
 import { AuditDashboard } from "./audit-dashboard"
+import { AuditFindings } from "./audit-findings"
 import { DataCheck } from "./data-check"
 import { ImportSummary } from "./import-summary"
 import { ReportCard } from "./report-card"
@@ -19,12 +20,13 @@ import { useAuditImport } from "./use-audit-import"
 
 const tool = TOOL_BY_SLUG["campaign-auditor"]
 
-type Step = "files" | "summary" | "confirmed" | "dashboard"
+type Step = "files" | "summary" | "confirmed" | "dashboard" | "audit"
 const STEPS: { id: Step; label: string }[] = [
   { id: "files", label: "Raporty i kolumny" },
   { id: "summary", label: "Podsumowanie" },
   { id: "confirmed", label: "Kontrola danych" },
   { id: "dashboard", label: "Dashboard" },
+  { id: "audit", label: "Audyt" },
 ]
 
 export function CampaignAuditor() {
@@ -37,7 +39,7 @@ export function CampaignAuditor() {
   }
   const hasFiles = audit.files.length > 0
   // The normalised, joined layer is built once the user confirms the import.
-  const confirmed = step === "confirmed" || step === "dashboard"
+  const confirmed = step === "confirmed" || step === "dashboard" || step === "audit"
   const dataset = useMemo(
     () =>
       confirmed
@@ -171,7 +173,10 @@ export function CampaignAuditor() {
           onNext={() => setStep("dashboard")}
         />
       )}
-      {step === "dashboard" && dataset && <AuditDashboard data={dataset} />}
+      {step === "dashboard" && dataset && (
+        <AuditDashboard data={dataset} onNext={() => setStep("audit")} />
+      )}
+      {step === "audit" && dataset && <AuditFindings data={dataset} />}
     </>
   )
 }

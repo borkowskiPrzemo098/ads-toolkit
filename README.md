@@ -191,7 +191,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy       |
 | 3    | Normalizacja i łączenie danych                            | gotowy       |
 | 4    | Dashboard KPI i wykresy                                   | gotowy       |
-| 5    | Audyt kampanii i słów kluczowych                          | do zrobienia |
+| 5    | Audyt kampanii i słów kluczowych                          | gotowy       |
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | do zrobienia |
 | 7    | Rekomendacje i indeks efektywności                        | do zrobienia |
 | 8    | Rentowność i porównanie okresów                           | do zrobienia |
@@ -245,6 +245,31 @@ Dashboard (`dashboard.ts`, `components/tools/campaign-auditor/audit-dashboard.ts
   udział kampanii w budżecie, koszt, konwersje i CPA według kampanii (CPA z liczbą
   konwersji; kampanie bez konwersji wypisane osobno).
 - Fixture z segmentem „Dzień”: `kampanie-dzienne.csv`.
+
+Silnik audytu (`audit.ts`, `rules/*`, `findings.ts`, `stats.ts`, `thresholds.ts`):
+
+- Każde wykrycie: nazwa, ważność (krytyczny/wysoki/średni/niski/informacyjny), opis,
+  dowody liczbowe, możliwa przyczyna (bez przesądzania), rekomendowane działanie,
+  szacowany wpływ tylko jako prosty rachunek na danych okresu, pewność, źródło (raport,
+  wymiar, okres, sposób obliczenia).
+- Punkt odniesienia: średnie konta (słowa kluczowe: średnie raportu słów) albo cele
+  CPA/ROAS podane przez użytkownika. Reguła działa dopiero, gdy test dwumianowy liczby
+  konwersji daje p < 0,05; pewność: p < 0,001 wysoka, < 0,01 średnia. Brak konwersji jest
+  istotny od liczby kliknięć, przy której (1 − CR)ⁿ < 5%. Mniejsze próby trafiają do
+  „za mało danych” i nigdy nie dostają rekomendacji wykluczenia.
+- Kampanie: A1 wysoki koszt / mało konwersji, A2 wysoki CPA (nie, gdy ROAS ≥ konta),
+  A3 niski ROAS, A4 koncentracja budżetu, A6 niski CTR w obrębie typu kampanii,
+  A7 duży ruch / niska konwersja, A8 kandydaci do większego budżetu (z zastrzeżeniem
+  o braku danych o udziale w wyświetleniach), A9 wahania CPA między połowami okresu,
+  A10 za mało danych.
+- Słowa kluczowe: B1 koszt bez konwersji, B2 bardzo wysoki CPA, B3 dużo kliknięć / niska
+  konwersja, B4 wysoki CTR i konwersja, B5 bardzo niski CTR, B6 to samo słowo w kilku
+  grupach, B7 drogie słowa do weryfikacji, B8 kandydaci do budżetu/testów, B0 za mało
+  danych. Maks. 12 wykryć na regułę, reszta w podsumowaniu.
+- Progi z uzasadnieniem w `thresholds.ts`, pokazywane w aplikacji pod „Jak liczymy”.
+  Kategoria „krytyczny” nie jest przyznawana przez żadną z obecnych reguł.
+- Fixtures scenariuszy: `kampanie-audyt.csv`, `slowa-kluczowe-audyt.csv` (wartości
+  oczekiwane policzone ręcznie w `tests/unit/auditor-rules.test.ts`).
 - Ekran „Kontrola danych” po zatwierdzeniu importu: sumy konta i ich źródło, zgodność
   raportów, kampanie i sposób łączenia. 200 000 wierszy: import ok. 2 s, normalizacja i
   łączenie ok. 2 s.

@@ -202,6 +202,19 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await expect(page.getByRole("img", { name: "Wykres: ROAS" })).toBeVisible()
     },
   ],
+  [
+    "audyt kampanii – wyniki audytu",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, ["kampanie-audyt.csv", "slowa-kluczowe-audyt.csv"])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("button", { name: "Cele (opcjonalnie)" }).click()
+      await page.getByRole("button", { name: "Jak liczymy" }).click()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)

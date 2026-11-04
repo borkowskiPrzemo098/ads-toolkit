@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo, useState } from "react"
-import { Database, FilterX, Info } from "lucide-react"
+import { ArrowRight, Database, FilterX, Info } from "lucide-react"
 import { NeonBars } from "@/components/charts/neon-bars"
 import { TimeSeriesChart } from "@/components/charts/lazy"
 import { SelectField } from "@/components/forms/select-field"
@@ -45,7 +45,13 @@ const MISSING: Record<Metric, string> = {
 }
 
 /** Step 4: KPIs, charts and filters. Every number comes from one report, named on screen. */
-export function AuditDashboard({ data }: { data: AuditDataset }) {
+export function AuditDashboard({
+  data,
+  onNext,
+}: {
+  data: AuditDataset
+  onNext: () => void
+}) {
   const [filters, setFilters] = useState<DashboardFilters>(NO_FILTERS)
   const options = useMemo(() => filterOptions(data), [data])
   const model = useMemo(() => buildDashboard(data, filters), [data, filters])
@@ -235,6 +241,10 @@ export function AuditDashboard({ data }: { data: AuditDataset }) {
           <CampaignCharts model={model} money={money} />
         </>
       )}
+      <Button size="lg" className="self-start" onClick={onNext}>
+        Przejdź do audytu
+        <ArrowRight />
+      </Button>
     </div>
   )
 }

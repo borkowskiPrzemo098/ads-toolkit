@@ -168,3 +168,44 @@ test("auditor dashboard: KPIs, charts and filters", async ({ page }) => {
   ).toBeVisible()
   expect(errors).toEqual([])
 })
+
+test("auditor findings: rules, evidence, filters and targets", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, ["kampanie-audyt.csv", "slowa-kluczowe-audyt.csv"])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+  await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+
+  const list = page.getByRole("list", { name: "Wyniki audytu" })
+  const first = list.getByRole("article").first()
+  await expect(first).toHaveAccessibleName(
+    "Wysoki koszt przy małej liczbie konwersji: Kurtki – Search"
+  )
+  await expect(first).toContainText("Ważność: Wysoki")
+  await expect(first).toContainText("Kampania odpowiada za 47% kosztu konta")
+  await expect(first).toContainText("Źródło: kampanie-audyt.csv · Kampania")
+  await expect(
+    list.getByRole("article", {
+      name: /Słowo kluczowe z kosztem bez konwersji: buty sportowe/,
+    })
+  ).toBeVisible()
+  await expectAccessible(page)
+
+  await page.getByRole("radio", { name: "Możliwości" }).click()
+  await expect(list.getByRole("article")).toHaveCount(5)
+  await page.getByRole("radio", { name: "Słowa kluczowe" }).click()
+  await expect(list.getByRole("article")).toHaveCount(3)
+
+  // A CPA goal of 15 makes "Buty – Search" (CPA 20) no longer a budget candidate.
+  await page.getByRole("radio", { name: "Kampanie" }).click()
+  await expect(list.getByRole("article", { name: /: Buty – Search$/ })).toHaveCount(1)
+  await page.getByRole("button", { name: "Cele (opcjonalnie)" }).click()
+  await page.getByLabel("Docelowy CPA").fill("15")
+  await expect(list.getByRole("article", { name: /: Buty – Search$/ })).toHaveCount(0)
+
+  await page.getByRole("button", { name: "Jak liczymy" }).click()
+  await expect(page.getByText(/test dwumianowy liczby konwersji/).first()).toBeVisible()
+  expect(errors).toEqual([])
+})

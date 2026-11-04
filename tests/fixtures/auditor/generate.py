@@ -180,6 +180,53 @@ for day in range(1, 32):
         daily.append([f"2026-10-{day:02d}", name, cid, ctype, status, str(clicks * 20), str(clicks), f"{cost:.2f}".replace(".", ","), f"{conv},00", f"{conv * 200},00"])
 write_csv("kampanie-dzienne.csv", daily)
 
+# 12. Audit scenario: campaigns built to trigger each campaign rule (see auditor-rules.test.ts).
+write_csv(
+    "kampanie-audyt.csv",
+    [
+        ["Raport kampanii"],
+        [PL_PERIOD],
+        ["Kampania", "Identyfikator kampanii", "Typ kampanii", "Stan kampanii", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        # Good performer: CPA 20, CR 5%, ROAS 1000%.
+        ["Buty – Search", "1111", "Sieć wyszukiwania", "Włączona", "60 000", "3 000", "3 000,00 zł", "150,00", "30 000,00 zł"],
+        # Big spend, few conversions: 33% of cost, 9% of conversions, CPA 200.
+        ["Kurtki – Search", "2222", "Sieć wyszukiwania", "Włączona", "40 000", "2 500", "5 000,00 zł", "25,00", "5 000,00 zł"],
+        # Strong performer: CPA 6,67, ROAS 3000%.
+        ["Brand – Search", "3333", "Sieć wyszukiwania", "Włączona", "8 000", "1 600", "640,00 zł", "96,00", "19 200,00 zł"],
+        # Too little data: 12 clicks.
+        ["Akcesoria – Search", "4444", "Sieć wyszukiwania", "Włączona", "900", "12", "18,00 zł", "0,00", "0,00 zł"],
+        # Very low CTR among Search campaigns: 0,3% vs median ~5%.
+        ["Skarpety – Search", "5555", "Sieć wyszukiwania", "Włączona", "50 000", "150", "300,00 zł", "6,00", "900,00 zł"],
+        # Display: CPA 40 is fine, but ROAS 150% is far below the account (~545%).
+        # CTR is not compared with Search campaigns.
+        ["Remarketing – Display", "6666", "Sieć reklamowa", "Włączona", "400 000", "800", "1 600,00 zł", "40,00", "2 400,00 zł"],
+    ],
+)
+
+# 13. Audit scenario: keywords built to trigger each keyword rule.
+write_csv(
+    "slowa-kluczowe-audyt.csv",
+    [
+        ["Raport słów kluczowych"],
+        [PL_PERIOD],
+        ["Słowo kluczowe", "Typ dopasowania", "Kampania", "Grupa reklam", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        # Good keyword; also duplicated in another ad group (overlap).
+        ["buty do biegania", "Do wyrażenia", "Buty – Search", "Damskie", "20 000", "1 200", "1 200,00", "72,00", "14 400,00"],
+        ["buty do biegania", "Ścisłe", "Buty – Search", "Nike", "2 000", "150", "150,00", "9,00", "1 800,00"],
+        # 900 clicks, no conversions: cost without conversions.
+        ["buty sportowe", "Przybliżone", "Buty – Search", "Ogólne", "30 000", "900", "1 080,00", "0,00", "0,00"],
+        # Very low CTR (0,5%).
+        ["buty", "Przybliżone", "Buty – Search", "Ogólne", "40 000", "200", "300,00", "2,00", "400,00"],
+        # Very high CPA (500).
+        ["kurtka zimowa", "Do wyrażenia", "Kurtki – Search", "Zimowe", "15 000", "1 500", "3 000,00", "6,00", "1 200,00"],
+        ["kurtka puchowa damska", "Ścisłe", "Kurtki – Search", "Zimowe", "3 000", "400", "800,00", "16,00", "3 200,00"],
+        # Two clicks, no conversion: too little data, must NOT be flagged.
+        ["skarpety do biegania", "Przybliżone", "Buty – Search", "Akcesoria", "300", "2", "3,00", "0,00", "0,00"],
+        # High CTR (12%) and conversion rate (10%).
+        ["nike pegasus 41", "Ścisłe", "Buty – Search", "Nike", "2 500", "300", "450,00", "30,00", "6 000,00"],
+    ],
+)
+
 # Broken files: missing required cost column, a non-number, a negative click count.
 write_csv(
     "brak-kosztu.csv",
