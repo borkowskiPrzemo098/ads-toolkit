@@ -28,3 +28,11 @@ export const MetricBarChart = dynamic(
     ),
   }
 )
+
+export const TimeSeriesChart = dynamic(
+  () => import("./time-series-chart").then((m) => m.TimeSeriesChart),
+  {
+    ssr: false,
+    loading: () => <div className="h-52" aria-hidden="true" />,
+  }
+)

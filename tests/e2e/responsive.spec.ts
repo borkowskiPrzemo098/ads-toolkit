@@ -187,6 +187,21 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await expect(page.getByRole("heading", { name: "Sumy konta" })).toBeVisible()
     },
   ],
+  [
+    "audyt kampanii – dashboard",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, [
+        "kampanie-dzienne.csv",
+        "urzadzenia.xlsx",
+        "lokalizacje.csv",
+      ])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await expect(page.getByRole("img", { name: "Wykres: ROAS" })).toBeVisible()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)

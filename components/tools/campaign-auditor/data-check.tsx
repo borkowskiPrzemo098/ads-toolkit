@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft } from "lucide-react"
+import { ArrowLeft, ArrowRight } from "lucide-react"
 import { Panel } from "@/components/layout/panel"
 import { TableScroll } from "@/components/layout/table-scroll"
 import { Button } from "@/components/ui/button"
@@ -46,7 +46,15 @@ const share = (d: number | null | undefined) =>
  * Step 3: how the reports were joined, before any analysis. Shows where account totals come
  * from and how every other report compares with them, so double counting is visible.
  */
-export function DataCheck({ data, onBack }: { data: AuditDataset; onBack: () => void }) {
+export function DataCheck({
+  data,
+  onBack,
+  onNext,
+}: {
+  data: AuditDataset
+  onBack: () => void
+  onNext: () => void
+}) {
   const { primary, totals } = data
   const money = (v: number | null) => (v === null ? "—" : formatMoney(v, data.currency))
   const name = (id: string) => data.reports.find((r) => r.id === id)!.name
@@ -194,14 +202,16 @@ export function DataCheck({ data, onBack }: { data: AuditDataset; onBack: () => 
         </ul>
       </Panel>
 
-      <p className="text-sm leading-relaxed text-muted-foreground">
-        Wskaźniki (CTR, CPC, CPA, ROAS), wykresy i reguły audytu zbudujemy na tych danych
-        w kolejnych etapach.
-      </p>
-      <Button variant="outline" size="lg" className="self-start" onClick={onBack}>
-        <ArrowLeft />
-        Wróć do raportów
-      </Button>
+      <div className="flex flex-wrap gap-3">
+        <Button size="lg" onClick={onNext} disabled={!primary}>
+          Przejdź do dashboardu
+          <ArrowRight />
+        </Button>
+        <Button variant="outline" size="lg" onClick={onBack}>
+          <ArrowLeft />
+          Wróć do raportów
+        </Button>
+      </div>
     </div>
   )
 }

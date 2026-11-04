@@ -124,3 +124,47 @@ test("auditor import: manual mapping and the same file twice", async ({ page }) 
     page.getByRole("button", { name: "Przejdź do podsumowania" })
   ).toBeDisabled()
 })
+
+test("auditor dashboard: KPIs, charts and filters", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, ["kampanie-dzienne.csv", "urzadzenia.xlsx"])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+
+  const kpis = page.getByRole("region", { name: "Najważniejsze wskaźniki" })
+  const kpi = (label: string) => kpis.locator("div").filter({ hasText: label }).first()
+  // kampanie-dzienne.csv: no currency in the file, so amounts carry no symbol.
+  await expect(kpi("Koszt")).toContainText(nbsp("9754,80"))
+  await expect(kpi("CTR")).toContainText("5,00%")
+  await expect(kpi("ROAS")).toContainText("572%")
+  await expect(page.getByText("Raporty nie podają waluty")).toBeVisible()
+  for (const chart of ["Koszt", "Konwersje", "ROAS"])
+    await expect(page.getByRole("img", { name: `Wykres: ${chart}` })).toBeVisible()
+  await expect(page.getByText(/Kurtki – PMax\s*72%/)).toBeVisible()
+  await expectAccessible(page)
+
+  await page
+    .getByLabel("Kampania", { exact: true })
+    .selectOption({ label: "Buty – Search" })
+  await expect(kpi("Kliknięcia")).toContainText("2570")
+
+  await page
+    .getByLabel("Kampania", { exact: true })
+    .selectOption({ label: "Wszystkie kampanie" })
+  await page.getByLabel("Od").fill("2026-10-01")
+  await page.getByLabel("Do").fill("2026-10-07")
+  await expect(page.getByText("21 rekordów po filtrach")).toBeVisible()
+
+  await page.getByRole("button", { name: "Wyczyść" }).click()
+  await page.getByLabel("Urządzenie").selectOption({ label: "Telefony" })
+  await expect(
+    page.getByText(/liczby pochodzą z raportu „urzadzenia.xlsx”/)
+  ).toBeVisible()
+  await expect(kpi("Koszt")).toContainText(nbsp("1190,40"))
+  await expect(
+    page.getByText(/nie mają kolumn potrzebnych do wybranych filtrów/)
+  ).toBeVisible()
+  expect(errors).toEqual([])
+})

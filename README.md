@@ -190,7 +190,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 1    | Analiza projektu i plan                                   | gotowy       |
 | 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy       |
 | 3    | Normalizacja i łączenie danych                            | gotowy       |
-| 4    | Dashboard KPI i wykresy                                   | do zrobienia |
+| 4    | Dashboard KPI i wykresy                                   | gotowy       |
 | 5    | Audyt kampanii i słów kluczowych                          | do zrobienia |
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | do zrobienia |
 | 7    | Rekomendacje i indeks efektywności                        | do zrobienia |
@@ -231,6 +231,20 @@ Normalizacja i łączenie:
   (próg prywatności haseł, kampanie bez słów kluczowych). Ostrzeżenia: kampanie spoza
   raportu sum, różne konta, różne waluty, inny okres.
 - `metrics.ts`: wzory KPI wspólne z Raportami PPC (`lib/reports/aggregate.ts`).
+
+Dashboard (`dashboard.ts`, `components/tools/campaign-auditor/audit-dashboard.tsx`):
+
+- 10 KPI: koszt, kliknięcia, wyświetlenia, CTR, śr. CPC, konwersje, współczynnik konwersji,
+  CPA, wartość konwersji, ROAS. Brak kolumny lub zerowy mianownik = N/D z powodem.
+  ROAS opisany jako przychód względem kosztu, nie zysk.
+- Wszystkie liczby z jednego raportu, nazwanego na ekranie: raport sum konta, a gdy filtr
+  wymaga wymiaru, którego nie ma (urządzenie, lokalizacja, dzień), najwyższy raport, który
+  go ma, z wyjaśnieniem. Filtrów, na które nie odpowiada żaden raport, nie zastępujemy zerami.
+- Filtry: kampania, typ, stan, urządzenie, lokalizacja, okres (pokazywane tylko, gdy dane je
+  mają). Wykresy: koszt, konwersje i ROAS w czasie (dziennie; tygodniowo powyżej 62 dni),
+  udział kampanii w budżecie, koszt, konwersje i CPA według kampanii (CPA z liczbą
+  konwersji; kampanie bez konwersji wypisane osobno).
+- Fixture z segmentem „Dzień”: `kampanie-dzienne.csv`.
 - Ekran „Kontrola danych” po zatwierdzeniu importu: sumy konta i ich źródło, zgodność
   raportów, kampanie i sposób łączenia. 200 000 wierszy: import ok. 2 s, normalizacja i
   łączenie ok. 2 s.

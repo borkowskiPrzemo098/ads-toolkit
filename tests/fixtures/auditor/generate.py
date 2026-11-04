@@ -166,6 +166,20 @@ write_csv(
     ],
 )
 
+# 11. Campaigns by day (segment "Dzień"), 31 days of October: drives the time charts.
+daily = [["Raport kampanii"], [PL_PERIOD], ["Dzień", "Kampania", "Identyfikator kampanii", "Typ kampanii", "Stan kampanii", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."]]
+for day in range(1, 32):
+    for cid, name, ctype, status, base in (
+        ("1111", "Buty – Search", "Sieć wyszukiwania", "Włączona", 80),
+        ("2222", "Kurtki – PMax", "Performance Max", "Włączona", 110),
+        ("3333", "Brand – Search", "Sieć wyszukiwania", "Wstrzymana", 12),
+    ):
+        clicks = base + day % 7
+        cost = clicks * (1.0 if cid == "1111" else 2.0 if cid == "2222" else 0.4)
+        conv = (day % 3) + (3 if cid == "1111" else 1 if cid == "2222" else 2)
+        daily.append([f"2026-10-{day:02d}", name, cid, ctype, status, str(clicks * 20), str(clicks), f"{cost:.2f}".replace(".", ","), f"{conv},00", f"{conv * 200},00"])
+write_csv("kampanie-dzienne.csv", daily)
+
 # Broken files: missing required cost column, a non-number, a negative click count.
 write_csv(
     "brak-kosztu.csv",
