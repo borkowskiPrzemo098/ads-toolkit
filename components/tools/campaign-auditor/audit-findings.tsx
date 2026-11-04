@@ -31,7 +31,11 @@ import { formatNumber, parseDecimal } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
 import { comparisonOptions } from "@/lib/auditor/periods"
 import { profitModel } from "@/lib/auditor/profitability"
+import { buildActionPlan, type TaskStatus } from "@/lib/auditor/action-plan"
+import { formatMoney } from "@/lib/auditor/format"
+import { ActionPlanPanel } from "./action-plan-panel"
 import { EfficiencyIndexPanel } from "./efficiency-index-panel"
+import { ReportPanel } from "./report-panel"
 import { PeriodsPanel } from "./periods-panel"
 import { ProfitabilityPanel, type ProfitForm } from "./profitability-panel"
 import { RecommendationsPanel } from "./recommendations-panel"
@@ -49,6 +53,8 @@ type Tab =
   | "schedule"
   | "profit"
   | "periods"
+  | "plan"
+  | "report"
 type KindFilter = "all" | "problem" | "opportunity" | "data"
 
 const SEVERITY_STYLE: Record<Severity, string> = {
@@ -110,6 +116,11 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
     })
   }, [data, profitForm])
   const periodsAvailable = useMemo(() => comparisonOptions(data).length > 0, [data])
+  const tasks = useMemo(
+    () => buildActionPlan(result.findings, (v) => formatMoney(v, data.currency)),
+    [result.findings, data.currency]
+  )
+  const [statuses, setStatuses] = useState<Record<string, TaskStatus>>({})
   const areas = [...new Set(result.findings.map((f) => f.area))]
   const tabs: { id: Tab; label: string }[] = [
     { id: "recommendations", label: "Rekomendacje" },
@@ -125,6 +136,8 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
     ...(periodsAvailable
       ? [{ id: "periods" as const, label: "Porównanie okresów" }]
       : []),
+    { id: "plan", label: "Plan działań" },
+    { id: "report", label: "Raport PDF i CSV" },
   ]
   const areaFindings = (a: FindingArea) => result.findings.filter((f) => f.area === a)
   const shown = result.findings.filter(
@@ -176,11 +189,11 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
       </dl>
 
       {tabs.length > 1 && (
-        <div className="max-w-full overflow-x-auto">
+        <div>
           <div
             role="tablist"
             aria-label="Widok audytu"
-            className="flex w-max gap-1 rounded-xl border border-border bg-card p-1"
+            className="flex flex-wrap gap-1 rounded-xl border border-border bg-card p-1"
           >
             {tabs.map((t) => (
               <button
@@ -217,6 +230,22 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
         />
       )}
       {tab === "periods" && <PeriodsPanel data={data} />}
+      {tab === "plan" && (
+        <ActionPlanPanel
+          tasks={tasks}
+          statuses={statuses}
+          onStatus={(id, status) => setStatuses((s) => ({ ...s, [id]: status }))}
+        />
+      )}
+      {tab === "report" && (
+        <ReportPanel
+          data={data}
+          result={result}
+          tasks={tasks}
+          statuses={statuses}
+          profit={profit}
+        />
+      )}
 
       {tab === "searchTerms" && result.searchTerms && (
         <>

@@ -82,6 +82,15 @@ export async function auditLayout(page: Page, touch: boolean): Promise<LayoutIss
         const r = el.getBoundingClientRect()
         // Visually hidden native inputs behind custom controls.
         if (r.width <= 1) continue
+        // A checkbox or radio inside its <label>: the whole label is the target.
+        const label = el.closest("label")
+        if (
+          el.tagName === "INPUT" &&
+          /checkbox|radio/.test((el as HTMLInputElement).type) &&
+          label &&
+          label.getBoundingClientRect().height >= 24
+        )
+          continue
         // WCAG 2.5.8 exempts links inside running text.
         if (
           el.tagName === "A" &&

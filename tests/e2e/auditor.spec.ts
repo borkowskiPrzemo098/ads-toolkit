@@ -321,13 +321,11 @@ test("auditor profitability and period comparison", async ({ page }) => {
   await page.getByLabel("Marża").fill("40")
   await page.getByLabel("Koszt dostawy na zamówienie").fill("10")
   const row = (label: string) =>
-    page
-      .locator("dl > div")
-      .filter({
-        has: page.locator("dt", {
-          hasText: new RegExp(`^${label.replace(/[()]/g, "\\$&")}`),
-        }),
-      })
+    page.locator("dl > div").filter({
+      has: page.locator("dt", {
+        hasText: new RegExp(`^${label.replace(/[()]/g, "\\$&")}`),
+      }),
+    })
   await expect(row("Szacowany zysk po reklamie")).toContainText(nbsp("9272,00 zł"))
   await expect(row("Szacowany zysk po reklamie")).toContainText("Szacunek")
   await expect(row("Koszt reklamy")).toContainText("Google Ads")
@@ -345,6 +343,48 @@ test("auditor profitability and period comparison", async ({ page }) => {
   )
   await expect(table.getByRole("row").filter({ hasText: "ROAS" })).toContainText("p.p.")
   await expect(page.getByText(/ROAS 67% → 100%/)).toBeVisible()
+  await expectAccessible(page)
+  expect(errors).toEqual([])
+})
+
+test("auditor action plan, PDF report and CSV exports", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, [
+    "kampanie-audyt.csv",
+    "slowa-kluczowe-audyt.csv",
+    "urzadzenia-audyt.csv",
+  ])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+  await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+
+  await page.getByRole("tab", { name: "Plan działań" }).click()
+  const first = page.getByLabel(
+    "Status: Przeanalizować kampanie z wysokim kosztem i małą liczbą konwersji"
+  )
+  await first.selectOption({ label: "Zrobione" })
+  await expect(page.getByText(/Zrobione: 1 z \d+/)).toBeVisible()
+  const plan = await downloadFrom(page, "CSV")
+  expect(plan.body.toString("utf8")).toContain(
+    "Przeanalizować kampanie z wysokim kosztem i małą liczbą konwersji"
+  )
+  expect(plan.body.toString("utf8")).toContain(";Zrobione")
+  await expectAccessible(page)
+
+  await page.getByRole("tab", { name: "Raport PDF i CSV" }).click()
+  await page.getByLabel("Nazwa firmy lub klienta").fill("Biegam.pl Sp. z o.o.")
+  await expect(page.getByLabel("Analiza lokalizacji")).toBeDisabled()
+  await page.getByLabel("Analiza urządzeń").uncheck()
+  const pdf = await downloadFrom(page, "Pobierz raport PDF")
+  expect(pdf.name).toMatch(/^audyt-google-ads-biegam-pl-sp-z-o-o-\d{4}-\d{2}-\d{2}\.pdf$/)
+  expect(pdf.body.subarray(0, 5).toString()).toBe("%PDF-")
+  expect(pdf.body.length).toBeGreaterThan(50_000)
+  const findings = await downloadFrom(page, "Wykrycia i rekomendacje")
+  expect(findings.body.toString("utf8")).toContain("Grupa;Obszar;Problem")
+  const campaigns = await downloadFrom(page, "Dane kampanii")
+  expect(campaigns.body.toString("utf8")).toContain("Kurtki – Search;2222")
   await expectAccessible(page)
   expect(errors).toEqual([])
 })

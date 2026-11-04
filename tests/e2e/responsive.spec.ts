@@ -281,6 +281,19 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await page.getByRole("tab", { name: "Porównanie okresów" }).click()
     },
   ],
+  [
+    "audyt kampanii – plan i raport",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, ["kampanie-audyt.csv", "slowa-kluczowe-audyt.csv"])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("tab", { name: "Plan działań" }).click()
+      await page.getByRole("tab", { name: "Raport PDF i CSV" }).click()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)

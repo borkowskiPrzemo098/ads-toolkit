@@ -195,7 +195,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy       |
 | 7    | Rekomendacje i indeks efektywności                        | gotowy       |
 | 8    | Rentowność i porównanie okresów                           | gotowy       |
-| 9    | Raport PDF i plan działań                                 | do zrobienia |
+| 9    | Raport PDF i plan działań                                 | gotowy       |
 | 10   | Testy, wydajność, bezpieczeństwo, regresja                | do zrobienia |
 
 Import (`lib/auditor/`):
@@ -321,3 +321,15 @@ Rentowność i okresy (`profitability.ts`, `periods.ts`):
   ilościowe jako średnie dzienne; ostrzeżenia przy nakładaniu się okresów i małej liczbie
   konwersji; kampanie, które najbardziej poprawiły i pogorszyły ROAS (lub CPA).
 - Fixture: `kampanie-wrzesien.csv` (30 dni) do porównania z październikiem (31 dni).
+
+Plan działań, PDF, CSV (`action-plan.ts`, `export.ts`, `lib/pdf/audit-report.ts`):
+
+- Plan działań: wykrycia grupowane w zadania (np. „Sprawdzić wyszukiwane hasła i dodać
+  wykluczenia”) z priorytetem, opisem, uzasadnieniem (liczba wykryć, koszt) i statusem
+  Do zrobienia / W trakcie / Zrobione (w pamięci karty). Zadania monitorowania na końcu.
+- Raport PDF: strona tytułowa (klient, konto, okres, data, opcjonalne logo PNG/JPG) i 13
+  rozdziałów w kolejności specyfikacji; rozdziały bez danych pomijane, każdy można
+  ukryć. Geist osadzony (polskie znaki). jsPDF i renderer ładowane dopiero przy eksporcie.
+- CSV: wykrycia z rekomendacjami (grupa, ważność, pewność, dowody, przyczyna, działanie,
+  źródło), plan działań ze statusami, dane kampanii z przeliczonymi KPI.
+- Odczyt logo wspólny z Raportami PPC: `lib/pdf/logo.ts`.
