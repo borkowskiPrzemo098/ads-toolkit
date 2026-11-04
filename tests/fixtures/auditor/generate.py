@@ -283,6 +283,20 @@ for day in ("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota"
         hours_rows.append([day, str(hour), str(clicks), f"{clicks:.2f}".replace(".", ","), f"{conv},00"])
 write_csv("godziny-audyt.csv", hours_rows)
 
+# 18. September for period comparison with kampanie-audyt.csv (October): 30 vs 31 days.
+# Kurtki improved (CPA 200 → see October), Buty worsened, Brand stable.
+write_csv(
+    "kampanie-wrzesien.csv",
+    [
+        ["Raport kampanii"],
+        ["1 września 2026 - 30 września 2026"],
+        ["Kampania", "Identyfikator kampanii", "Typ kampanii", "Stan kampanii", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        ["Buty – Search", "1111", "Sieć wyszukiwania", "Włączona", "50 000", "2 400", "2 400,00 zł", "160,00", "32 000,00 zł"],
+        ["Kurtki – Search", "2222", "Sieć wyszukiwania", "Włączona", "30 000", "1 500", "3 000,00 zł", "10,00", "2 000,00 zł"],
+        ["Brand – Search", "3333", "Sieć wyszukiwania", "Włączona", "7 500", "1 500", "600,00 zł", "90,00", "18 000,00 zł"],
+    ],
+)
+
 # Broken files: missing required cost column, a non-number, a negative click count.
 write_csv(
     "brak-kosztu.csv",

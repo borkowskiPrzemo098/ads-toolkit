@@ -304,3 +304,47 @@ test("auditor recommendations and efficiency index", async ({ page }) => {
   await expectAccessible(page)
   expect(errors).toEqual([])
 })
+
+test("auditor profitability and period comparison", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, ["kampanie-audyt.csv", "kampanie-wrzesien.csv"])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+  await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+
+  await page.getByRole("tab", { name: "Rentowność" }).click()
+  await expect(
+    page.getByText("Wpisz marżę albo koszt produktu, aby oszacować zysk.").first()
+  ).toBeVisible()
+  await page.getByLabel("Marża").fill("40")
+  await page.getByLabel("Koszt dostawy na zamówienie").fill("10")
+  const row = (label: string) =>
+    page
+      .locator("dl > div")
+      .filter({
+        has: page.locator("dt", {
+          hasText: new RegExp(`^${label.replace(/[()]/g, "\\$&")}`),
+        }),
+      })
+  await expect(row("Szacowany zysk po reklamie")).toContainText(nbsp("9272,00 zł"))
+  await expect(row("Szacowany zysk po reklamie")).toContainText("Szacunek")
+  await expect(row("Koszt reklamy")).toContainText("Google Ads")
+  await expect(row("Marża (wpisana)")).toContainText("Wpisane")
+  await expect(row("Break-even ROAS")).toContainText("290,0%")
+  await expectAccessible(page)
+
+  await page.getByRole("tab", { name: "Porównanie okresów" }).click()
+  await expect(page.getByText(/30 i 31 dni/)).toBeVisible()
+  const table = page.getByRole("region", {
+    name: "Porównanie wskaźników między okresami",
+  })
+  await expect(table.getByRole("row").filter({ hasText: "Koszt" })).toContainText(
+    "+70,3%"
+  )
+  await expect(table.getByRole("row").filter({ hasText: "ROAS" })).toContainText("p.p.")
+  await expect(page.getByText(/ROAS 67% → 100%/)).toBeVisible()
+  await expectAccessible(page)
+  expect(errors).toEqual([])
+})

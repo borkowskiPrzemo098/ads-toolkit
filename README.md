@@ -194,7 +194,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 5    | Audyt kampanii i słów kluczowych                          | gotowy       |
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy       |
 | 7    | Rekomendacje i indeks efektywności                        | gotowy       |
-| 8    | Rentowność i porównanie okresów                           | do zrobienia |
+| 8    | Rentowność i porównanie okresów                           | gotowy       |
 | 9    | Raport PDF i plan działań                                 | do zrobienia |
 | 10   | Testy, wydajność, bezpieczeństwo, regresja                | do zrobienia |
 
@@ -308,3 +308,16 @@ Rekomendacje, indeks, reklamy (`recommendations.ts`, `efficiency-index.ts`, `rul
 - Reklamy: niska ocena skuteczności (Ad Strength), reklama konwertująca słabiej niż inne
   w tej samej grupie, bardzo niski CTR. Pojedyncze nagłówki RSA nie są oceniane (eksport
   podaje wyniki całej reklamy).
+
+Rentowność i okresy (`profitability.ts`, `periods.ts`):
+
+- Rentowność: marża % albo koszt produktu, dostawa i inne koszty zmienne na zamówienie,
+  średnia wartość zamówienia (tylko gdy raporty nie mają wartości konwersji), docelowy
+  zysk. Każda wartość oznaczona: „Google Ads”, „Wpisane”, „Szacunek”. Bez marży i kosztu
+  produktu zysk nie jest pokazywany. Break-even ROAS = 100% ÷ (marża po kosztach
+  zmiennych ÷ przychód); maks. CPA = marża po kosztach zmiennych na zamówienie.
+- Porównanie okresów: dwa raporty tego samego typu z różnych okresów albo raport dzienny
+  podzielony na „ostatnie N dni / poprzednie N dni”. Przy różnej długości wartości
+  ilościowe jako średnie dzienne; ostrzeżenia przy nakładaniu się okresów i małej liczbie
+  konwersji; kampanie, które najbardziej poprawiły i pogorszyły ROAS (lub CPA).
+- Fixture: `kampanie-wrzesien.csv` (30 dni) do porównania z październikiem (31 dni).

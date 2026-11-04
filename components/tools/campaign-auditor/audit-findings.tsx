@@ -29,7 +29,11 @@ import type { AuditDataset } from "@/lib/auditor/join"
 import { METHOD_NOTES } from "@/lib/auditor/thresholds"
 import { formatNumber, parseDecimal } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { comparisonOptions } from "@/lib/auditor/periods"
+import { profitModel } from "@/lib/auditor/profitability"
 import { EfficiencyIndexPanel } from "./efficiency-index-panel"
+import { PeriodsPanel } from "./periods-panel"
+import { ProfitabilityPanel, type ProfitForm } from "./profitability-panel"
 import { RecommendationsPanel } from "./recommendations-panel"
 import { SearchTermsPanel, type IntentInputs } from "./search-terms-panel"
 import { SchedulePanel, SegmentPanel } from "./segment-panel"
@@ -43,6 +47,8 @@ type Tab =
   | "devices"
   | "locations"
   | "schedule"
+  | "profit"
+  | "periods"
 type KindFilter = "all" | "problem" | "opportunity" | "data"
 
 const SEVERITY_STYLE: Record<Severity, string> = {
@@ -81,6 +87,29 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
     return { cpa: c && c > 0 ? c : null, roas: r && r > 0 ? r : null }
   }, [cpa, roas])
   const result = useMemo(() => runAudit(data, targets, intent), [data, targets, intent])
+  const [profitForm, setProfitForm] = useState<ProfitForm>({
+    aov: "",
+    marginPct: "",
+    productCost: "",
+    shippingCost: "",
+    otherCost: "",
+    targetProfit: "",
+  })
+  const profit = useMemo(() => {
+    const n = (v: string) => {
+      const x = parseDecimal(v)
+      return x !== null && x >= 0 ? x : null
+    }
+    return profitModel(data, {
+      aov: n(profitForm.aov),
+      marginPct: n(profitForm.marginPct),
+      productCost: n(profitForm.productCost),
+      shippingCost: n(profitForm.shippingCost),
+      otherCost: n(profitForm.otherCost),
+      targetProfit: n(profitForm.targetProfit),
+    })
+  }, [data, profitForm])
+  const periodsAvailable = useMemo(() => comparisonOptions(data).length > 0, [data])
   const areas = [...new Set(result.findings.map((f) => f.area))]
   const tabs: { id: Tab; label: string }[] = [
     { id: "recommendations", label: "Rekomendacje" },
@@ -92,6 +121,10 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
     ...(result.devices ? [{ id: "devices" as const, label: "Urządzenia" }] : []),
     ...(result.locations ? [{ id: "locations" as const, label: "Lokalizacje" }] : []),
     ...(result.schedule ? [{ id: "schedule" as const, label: "Godziny i dni" }] : []),
+    { id: "profit", label: "Rentowność" },
+    ...(periodsAvailable
+      ? [{ id: "periods" as const, label: "Porównanie okresów" }]
+      : []),
   ]
   const areaFindings = (a: FindingArea) => result.findings.filter((f) => f.area === a)
   const shown = result.findings.filter(
@@ -174,6 +207,16 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
         <RecommendationsPanel groups={result.recommendations} />
       )}
       {tab === "index" && <EfficiencyIndexPanel index={result.index} />}
+      {tab === "profit" && (
+        <ProfitabilityPanel
+          model={profit}
+          form={profitForm}
+          onForm={setProfitForm}
+          currency={data.currency}
+          hasValue={(data.totals.conversionValue ?? 0) > 0}
+        />
+      )}
+      {tab === "periods" && <PeriodsPanel data={data} />}
 
       {tab === "searchTerms" && result.searchTerms && (
         <>

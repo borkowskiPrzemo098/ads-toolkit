@@ -82,12 +82,10 @@ export function adRules(
       title: "Reklamy z niską oceną skuteczności (Ad Strength)",
       subject: `${poor.length} ${poor.length === 1 ? "reklama" : "reklam"}`,
       situation: `Google ocenia te reklamy jako słabe. Wydały ${money(cost)}.`,
-      evidence: poor
-        .slice(0, 6)
-        .map((r) => ({
-          label: `${r.label} · ${r.adGroup}`,
-          value: `${r.strength}, ${money(r.metrics.cost ?? 0)}`,
-        })),
+      evidence: poor.slice(0, 6).map((r) => ({
+        label: `${r.label} · ${r.adGroup}`,
+        value: `${r.strength}, ${money(r.metrics.cost ?? 0)}`,
+      })),
       cause:
         "Zwykle zbyt mało unikalnych nagłówków i tekstów albo słabe powiązanie ze słowami kluczowymi.",
       action:
