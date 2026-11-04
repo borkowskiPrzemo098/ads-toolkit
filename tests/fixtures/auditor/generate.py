@@ -227,6 +227,62 @@ write_csv(
     ],
 )
 
+# 14. Search terms scenario (offer: "buty"): intents, unwanted categories, a converting term
+# that is not a keyword yet, a costly term without conversions, small samples.
+write_csv(
+    "hasla-audyt.csv",
+    [
+        ["Raport wyszukiwanych haseł"],
+        [PL_PERIOD],
+        ["Wyszukiwane hasło", "Typ dopasowania", "Kampania", "Grupa reklam", "Słowo kluczowe", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        ["buty do biegania", "Do wyrażenia", "Buty – Search", "Damskie", "buty do biegania", "9 000", "600", "600,00", "30,00", "6 000,00"],
+        ["buty do biegania damskie cena", "Do wyrażenia", "Buty – Search", "Damskie", "buty do biegania", "3 000", "300", "270,00", "18,00", "3 600,00"],
+        ["buty sportowe tanie", "Przybliżone", "Buty – Search", "Ogólne", "buty sportowe", "8 000", "400", "480,00", "0,00", "0,00"],
+        ["praca sklep obuwniczy", "Przybliżone", "Buty – Search", "Ogólne", "sklep obuwniczy", "900", "40", "36,00", "0,00", "0,00"],
+        ["oferty pracy sprzedawca butów", "Przybliżone", "Buty – Search", "Ogólne", "sklep obuwniczy", "500", "6", "5,40", "0,00", "0,00"],
+        ["buty za darmo", "Przybliżone", "Buty – Search", "Ogólne", "buty sportowe", "700", "30", "24,00", "0,00", "0,00"],
+        ["jak wyczyścić buty zamszowe", "Przybliżone", "Buty – Search", "Ogólne", "buty zamszowe", "2 000", "60", "30,00", "0,00", "0,00"],
+        ["kurtka zimowa damska", "Przybliżone", "Buty – Search", "Ogólne", "buty zimowe", "1 500", "20", "22,00", "0,00", "0,00"],
+        ["buty używane olx", "Przybliżone", "Buty – Search", "Ogólne", "buty sportowe", "400", "3", "3,30", "0,00", "0,00"],
+        ["nike pegasus 41 rozmiar 42", "Przybliżone", "Buty – Search", "Nike", "nike pegasus", "600", "80", "120,00", "8,00", "4 400,00"],
+        ["buty do biegania asics opinie", "Do wyrażenia", "Buty – Search", "Damskie", "buty do biegania", "800", "50", "45,00", "1,00", "250,00"],
+    ],
+)
+
+# 15. Devices scenario: mobile converts much worse; tablet too small to judge.
+write_csv(
+    "urzadzenia-audyt.csv",
+    [
+        ["Urządzenie", "Kampania", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        ["Komputery", "Buty – Search", "20 000", "1 500", "1 650,00", "90,00", "18 000,00"],
+        ["Telefony komórkowe z pełną przeglądarką", "Buty – Search", "40 000", "2 500", "2 250,00", "25,00", "4 000,00"],
+        ["Tablety z pełną przeglądarką", "Buty – Search", "1 000", "30", "33,00", "1,00", "150,00"],
+    ],
+)
+
+# 16. Locations scenario: Kraków expensive, Warszawa the biggest value, Opole too small.
+write_csv(
+    "lokalizacje-audyt.csv",
+    [
+        ["Miasto (lokalizacja użytkownika)", "Kampania", "Wyśw.", "Kliknięcia", "Koszt", "Konwersje", "Wartość konw."],
+        ["Warszawa", "Buty – Search", "30 000", "2 200", "2 200,00", "110,00", "22 000,00"],
+        ["Kraków", "Buty – Search", "12 000", "900", "1 080,00", "9,00", "1 800,00"],
+        ["Gdańsk", "Buty – Search", "8 000", "600", "600,00", "24,00", "4 800,00"],
+        ["Opole", "Buty – Search", "500", "15", "15,00", "0,00", "0,00"],
+    ],
+)
+
+# 17. Hours × days over four weeks: evenings convert well, nights badly.
+hours_rows = [["Raport godzin"], ["1 października 2026 - 28 października 2026"], ["Dzień tygodnia", "Godzina", "Kliknięcia", "Koszt", "Konwersje"]]
+for day in ("Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"):
+    for hour in range(24):
+        night = hour < 6
+        evening = 18 <= hour <= 21
+        clicks = 10 if night else 30
+        conv = 0 if night else (3 if evening else 1)
+        hours_rows.append([day, str(hour), str(clicks), f"{clicks:.2f}".replace(".", ","), f"{conv},00"])
+write_csv("godziny-audyt.csv", hours_rows)
+
 # Broken files: missing required cost column, a non-number, a negative click count.
 write_csv(
     "brak-kosztu.csv",

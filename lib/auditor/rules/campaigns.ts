@@ -396,12 +396,10 @@ export function campaignRules(ctx: RuleContext): RuleResult {
         title: "Kampanie bez wystarczających danych do oceny",
         subject: thin.map((it) => it.c.name).join(", "),
         situation: `${thin.length} ${thin.length === 1 ? "kampania ma" : "kampanie mają"} mniej niż ${minClicks} kliknięć, czyli za mało, by ocenić konwersję przy współczynniku konta ${pct(base.cr * 100, 2)}.`,
-        evidence: thin
-          .slice(0, 6)
-          .map((it) => ({
-            label: it.c.name,
-            value: `${n0(it.m.clicks)} klikn., ${money(it.m.cost ?? 0)}, ${n1(it.m.conversions)} konw.`,
-          })),
+        evidence: thin.slice(0, 6).map((it) => ({
+          label: it.c.name,
+          value: `${n0(it.m.clicks)} klikn., ${money(it.m.cost ?? 0)}, ${n1(it.m.conversions)} konw.`,
+        })),
         cause: "Mały budżet, krótki czas działania albo niski popyt.",
         action:
           "Nie wyciągaj wniosków o skuteczności tych kampanii. Oceń je ponownie po zebraniu większej liczby kliknięć.",

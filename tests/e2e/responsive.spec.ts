@@ -215,6 +215,41 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await page.getByRole("button", { name: "Jak liczymy" }).click()
     },
   ],
+  [
+    "audyt kampanii – wyszukiwane hasła",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, [
+        "kampanie-audyt.csv",
+        "hasla-audyt.csv",
+        "urzadzenia-audyt.csv",
+        "godziny-audyt.csv",
+      ])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("tab", { name: "Wyszukiwane hasła" }).click()
+      await page.getByLabel("Słowa opisujące ofertę").fill("buty")
+    },
+  ],
+  [
+    "audyt kampanii – godziny",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, [
+        "kampanie-audyt.csv",
+        "godziny-audyt.csv",
+        "urzadzenia-audyt.csv",
+      ])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("tab", { name: "Godziny i dni" }).click()
+      await expect(page.getByRole("img", { name: "Wykres: CPA" })).toBeVisible()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)

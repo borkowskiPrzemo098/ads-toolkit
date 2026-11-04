@@ -13,8 +13,12 @@ import { NumberField } from "@/components/forms/number-field"
 import { SegmentedControl } from "@/components/forms/segmented-control"
 import { Panel } from "@/components/layout/panel"
 import { Button } from "@/components/ui/button"
+import { SelectField } from "@/components/forms/select-field"
 import { runAudit } from "@/lib/auditor/audit"
+import { intentContext } from "@/lib/auditor/intent"
+import type { Decisions } from "@/lib/auditor/term-decisions"
 import {
+  AREA_LABEL,
   CONFIDENCE_LABEL,
   SEVERITY_LABEL,
   type Finding,
@@ -25,8 +29,11 @@ import type { AuditDataset } from "@/lib/auditor/join"
 import { METHOD_NOTES } from "@/lib/auditor/thresholds"
 import { formatNumber, parseDecimal } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { SearchTermsPanel, type IntentInputs } from "./search-terms-panel"
+import { SchedulePanel, SegmentPanel } from "./segment-panel"
 
 type AreaFilter = "all" | FindingArea
+type Tab = "findings" | "searchTerms" | "devices" | "locations" | "schedule"
 type KindFilter = "all" | "problem" | "opportunity" | "data"
 
 const SEVERITY_STYLE: Record<Severity, string> = {
@@ -47,13 +54,35 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
   const [kind, setKind] = useState<KindFilter>("all")
   const [targetsOpen, setTargetsOpen] = useState(false)
   const [methodOpen, setMethodOpen] = useState(false)
+  const [tab, setTab] = useState<Tab>("findings")
+  const [inputs, setInputs] = useState<IntentInputs>({
+    offer: "",
+    brands: "",
+    competitors: "",
+  })
+  const [decisions, setDecisions] = useState<Decisions>({})
+  const intent = useMemo(
+    () => intentContext(inputs.offer, inputs.brands, inputs.competitors),
+    [inputs]
+  )
 
   const targets = useMemo(() => {
     const c = parseDecimal(cpa)
     const r = parseDecimal(roas)
     return { cpa: c && c > 0 ? c : null, roas: r && r > 0 ? r : null }
   }, [cpa, roas])
-  const result = useMemo(() => runAudit(data, targets), [data, targets])
+  const result = useMemo(() => runAudit(data, targets, intent), [data, targets, intent])
+  const areas = [...new Set(result.findings.map((f) => f.area))]
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "findings", label: "Wykrycia" },
+    ...(result.searchTerms
+      ? [{ id: "searchTerms" as const, label: "Wyszukiwane hasła" }]
+      : []),
+    ...(result.devices ? [{ id: "devices" as const, label: "Urządzenia" }] : []),
+    ...(result.locations ? [{ id: "locations" as const, label: "Lokalizacje" }] : []),
+    ...(result.schedule ? [{ id: "schedule" as const, label: "Godziny i dni" }] : []),
+  ]
+  const areaFindings = (a: FindingArea) => result.findings.filter((f) => f.area === a)
   const shown = result.findings.filter(
     (f) => (area === "all" || f.area === area) && (kind === "all" || f.kind === kind)
   )
@@ -102,119 +131,209 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
         ))}
       </dl>
 
-      <div className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-end gap-3">
-          <SegmentedControl
-            label="Obszar"
-            value={area}
-            onChange={setArea}
-            options={[
-              { value: "all", label: "Wszystko" },
-              { value: "campaign", label: "Kampanie" },
-              { value: "keyword", label: "Słowa kluczowe" },
-            ]}
-          />
-          {/* Four options do not fit a 320px phone: the control scrolls sideways there. */}
-          <div className="max-w-full overflow-x-auto">
-            <SegmentedControl
-              label="Rodzaj"
-              value={kind}
-              onChange={setKind}
-              options={[
-                { value: "all", label: "Wszystkie" },
-                { value: "problem", label: "Problemy" },
-                { value: "opportunity", label: "Możliwości" },
-                { value: "data", label: "Dane" },
-              ]}
-            />
-          </div>
-          <Button
-            variant="outline"
-            aria-expanded={targetsOpen}
-            onClick={() => setTargetsOpen(!targetsOpen)}
+      {tabs.length > 1 && (
+        <div className="max-w-full overflow-x-auto">
+          <div
+            role="tablist"
+            aria-label="Widok audytu"
+            className="flex w-max gap-1 rounded-xl border border-border bg-card p-1"
           >
-            <Target />
-            {targets.cpa || targets.roas ? "Cele: ustawione" : "Cele (opcjonalnie)"}
-            <ChevronDown
-              className={cn(
-                "transition-transform duration-150",
-                targetsOpen && "rotate-180"
-              )}
-            />
-          </Button>
-        </div>
-        {targetsOpen && (
-          <div className="grid max-w-xl grid-cols-1 gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2">
-            <NumberField
-              label="Docelowy CPA"
-              value={cpa}
-              onChange={setCpa}
-              optional
-              hint="Zastępuje średni CPA konta w regułach."
-            />
-            <NumberField
-              label="Docelowy ROAS"
-              value={roas}
-              onChange={setRoas}
-              suffix="%"
-              optional
-              hint="Np. 400 = 400%. Zastępuje ROAS konta."
-            />
-          </div>
-        )}
-      </div>
-
-      {result.notes.length > 0 && (
-        <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground">
-          {result.notes.map((n) => (
-            <li key={n} className="flex items-start gap-2">
-              <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-              {n}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {shown.length === 0 ? (
-        <Panel>
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <SearchCheck className="size-4 text-success" aria-hidden="true" />
-            Brak wykryć w tym zakresie.
-          </p>
-        </Panel>
-      ) : (
-        <ol aria-label="Wyniki audytu" className="flex flex-col gap-4">
-          {shown.map((f) => (
-            <li key={f.id}>
-              <FindingCard finding={f} />
-            </li>
-          ))}
-        </ol>
-      )}
-
-      <div>
-        <Button
-          variant="ghost"
-          aria-expanded={methodOpen}
-          onClick={() => setMethodOpen(!methodOpen)}
-        >
-          <ChevronDown
-            className={cn(
-              "transition-transform duration-150",
-              methodOpen && "rotate-180"
-            )}
-          />
-          Jak liczymy
-        </Button>
-        {methodOpen && (
-          <ul className="mt-2 flex max-w-3xl list-disc flex-col gap-2 pl-5 text-sm leading-relaxed text-muted-foreground marker:text-muted-foreground">
-            {METHOD_NOTES.map((n) => (
-              <li key={n}>{n}</li>
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === t.id}
+                onClick={() => setTab(t.id)}
+                className={cn(
+                  "h-9 rounded-lg px-3.5 text-sm font-medium whitespace-nowrap transition-colors duration-150",
+                  tab === t.id
+                    ? "bg-[color-mix(in_oklab,var(--tool)_14%,transparent)] text-foreground ring-1 ring-[color-mix(in_oklab,var(--tool)_40%,transparent)] ring-inset"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {t.label}
+              </button>
             ))}
-          </ul>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
+
+      {tab === "searchTerms" && result.searchTerms && (
+        <>
+          <SearchTermsPanel
+            analysis={result.searchTerms}
+            currency={data.currency}
+            inputs={inputs}
+            onInputs={setInputs}
+            decisions={decisions}
+            onDecisions={setDecisions}
+          />
+          <AreaFindings findings={areaFindings("searchTerm")} />
+        </>
+      )}
+      {tab === "devices" && result.devices && (
+        <>
+          <SegmentPanel
+            analysis={result.devices}
+            label="Urządzenie"
+            currency={data.currency}
+          />
+          <AreaFindings findings={areaFindings("device")} />
+        </>
+      )}
+      {tab === "locations" && result.locations && (
+        <>
+          <SegmentPanel
+            analysis={result.locations}
+            label="Lokalizacja"
+            currency={data.currency}
+          />
+          <AreaFindings findings={areaFindings("location")} />
+        </>
+      )}
+      {tab === "schedule" && result.schedule && (
+        <>
+          <SchedulePanel analysis={result.schedule} currency={data.currency} />
+          {result.schedule.result.notes.map((n) => (
+            <p key={n} className="text-sm text-muted-foreground">
+              {n}
+            </p>
+          ))}
+          <AreaFindings findings={areaFindings("schedule")} />
+        </>
+      )}
+
+      {tab === "findings" && (
+        <>
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-end gap-3">
+              <SelectField
+                label="Obszar"
+                value={area}
+                onChange={setArea}
+                className="w-full sm:w-56"
+                options={[
+                  { value: "all", label: "Wszystkie obszary" },
+                  ...areas.map((a) => ({ value: a, label: AREA_LABEL[a] })),
+                ]}
+              />
+              {/* Four options do not fit a 320px phone: the control scrolls sideways there. */}
+              <div className="max-w-full overflow-x-auto">
+                <SegmentedControl
+                  label="Rodzaj"
+                  value={kind}
+                  onChange={setKind}
+                  options={[
+                    { value: "all", label: "Wszystkie" },
+                    { value: "problem", label: "Problemy" },
+                    { value: "opportunity", label: "Możliwości" },
+                    { value: "data", label: "Dane" },
+                  ]}
+                />
+              </div>
+              <Button
+                variant="outline"
+                aria-expanded={targetsOpen}
+                onClick={() => setTargetsOpen(!targetsOpen)}
+              >
+                <Target />
+                {targets.cpa || targets.roas ? "Cele: ustawione" : "Cele (opcjonalnie)"}
+                <ChevronDown
+                  className={cn(
+                    "transition-transform duration-150",
+                    targetsOpen && "rotate-180"
+                  )}
+                />
+              </Button>
+            </div>
+            {targetsOpen && (
+              <div className="grid max-w-xl grid-cols-1 gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2">
+                <NumberField
+                  label="Docelowy CPA"
+                  value={cpa}
+                  onChange={setCpa}
+                  optional
+                  hint="Zastępuje średni CPA konta w regułach."
+                />
+                <NumberField
+                  label="Docelowy ROAS"
+                  value={roas}
+                  onChange={setRoas}
+                  suffix="%"
+                  optional
+                  hint="Np. 400 = 400%. Zastępuje ROAS konta."
+                />
+              </div>
+            )}
+          </div>
+
+          {result.notes.length > 0 && (
+            <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground">
+              {result.notes.map((n) => (
+                <li key={n} className="flex items-start gap-2">
+                  <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                  {n}
+                </li>
+              ))}
+            </ul>
+          )}
+
+          {shown.length === 0 ? (
+            <Panel>
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <SearchCheck className="size-4 text-success" aria-hidden="true" />
+                Brak wykryć w tym zakresie.
+              </p>
+            </Panel>
+          ) : (
+            <ol aria-label="Wyniki audytu" className="flex flex-col gap-4">
+              {shown.map((f) => (
+                <li key={f.id}>
+                  <FindingCard finding={f} />
+                </li>
+              ))}
+            </ol>
+          )}
+
+          <div>
+            <Button
+              variant="ghost"
+              aria-expanded={methodOpen}
+              onClick={() => setMethodOpen(!methodOpen)}
+            >
+              <ChevronDown
+                className={cn(
+                  "transition-transform duration-150",
+                  methodOpen && "rotate-180"
+                )}
+              />
+              Jak liczymy
+            </Button>
+            {methodOpen && (
+              <ul className="mt-2 flex max-w-3xl list-disc flex-col gap-2 pl-5 text-sm leading-relaxed text-muted-foreground marker:text-muted-foreground">
+                {METHOD_NOTES.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
     </div>
+  )
+}
+
+function AreaFindings({ findings }: { findings: Finding[] }) {
+  if (!findings.length) return null
+  return (
+    <ol aria-label="Wykrycia w tym obszarze" className="flex flex-col gap-4">
+      {findings.map((f) => (
+        <li key={f.id}>
+          <FindingCard finding={f} />
+        </li>
+      ))}
+    </ol>
   )
 }
 

@@ -192,7 +192,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 3    | Normalizacja i łączenie danych                            | gotowy       |
 | 4    | Dashboard KPI i wykresy                                   | gotowy       |
 | 5    | Audyt kampanii i słów kluczowych                          | gotowy       |
-| 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | do zrobienia |
+| 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy       |
 | 7    | Rekomendacje i indeks efektywności                        | do zrobienia |
 | 8    | Rentowność i porównanie okresów                           | do zrobienia |
 | 9    | Raport PDF i plan działań                                 | do zrobienia |
@@ -275,3 +275,22 @@ Silnik audytu (`audit.ts`, `rules/*`, `findings.ts`, `stats.ts`, `thresholds.ts`
   łączenie ok. 2 s.
 - Pliki testowe: `tests/fixtures/auditor/` (generator `generate.py`, wymaga `openpyxl`).
   200 000 wierszy (26 MB) wczytuje się w ok. 2 s.
+
+Wyszukiwane hasła, urządzenia, lokalizacje, godziny (`intent.ts`, `rules/search-terms.ts`,
+`rules/segments.ts`, `term-decisions.ts`):
+
+- Intencja haseł (zakupowa, komercyjna, informacyjna, nawigacyjna, niepowiązana,
+  niepewna) to heurystyka ze słowników wspólnych z analizatorem słów i generatorem
+  wykluczeń; słowa oferty podane przez użytkownika wygrywają ze słownikami. Bez słów
+  oferty nic nie jest oznaczane jako niepowiązane.
+- Sugestie: „wyklucz” tylko od liczby kliknięć, przy której brak konwersji jest istotny;
+  mniejsze próby „obserwuj”; „nowe słowo” dla haseł z ≥ 2 konwersjami i CPA nie wyższym
+  niż średnio, spoza listy słów kluczowych. Decyzje (trafne, nietrafne, wyklucz, dodaj,
+  dopasowanie) tylko ręcznie; eksport TXT w składni Google Ads i CSV z kontekstem.
+- Urządzenia i lokalizacje: tabela CTR, CPC, konwersji, CPA, ROAS; wysoki CPA, niska
+  konwersja, segment z największą wartością, koncentracja budżetu, segmenty „do dalszej
+  analizy”. Tylko rekomendacje: aplikacja nie zmienia stawek.
+- Godziny i dni: najlepsze i najsłabsze godziny/dni (test dwumianowy); przy okresie
+  krótszym niż 4 tygodnie wnioski oznaczone jako wstępne.
+- Fixtures: `hasla-audyt.csv`, `urzadzenia-audyt.csv`, `lokalizacje-audyt.csv`,
+  `godziny-audyt.csv`.

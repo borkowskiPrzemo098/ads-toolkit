@@ -459,12 +459,10 @@ export function keywordRules(ctx: RuleContext): RuleResult {
             label: "Łączny koszt",
             value: money(thin.reduce((s, k) => s + (k.m.cost ?? 0), 0)),
           },
-          ...thin
-            .slice(0, 5)
-            .map((k) => ({
-              label: k.label,
-              value: `${n0(k.m.clicks)} klikn., ${money(k.m.cost ?? 0)}`,
-            })),
+          ...thin.slice(0, 5).map((k) => ({
+            label: k.label,
+            value: `${n0(k.m.clicks)} klikn., ${money(k.m.cost ?? 0)}`,
+          })),
         ],
         cause: "Mały ruch.",
         action:

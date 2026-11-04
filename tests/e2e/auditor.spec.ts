@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 import { uploadReports, VALID_REPORTS } from "./auditor-fixtures"
-import { expectAccessible, nbsp, watchErrors } from "./helpers"
+import { downloadFrom, expectAccessible, nbsp, watchErrors } from "./helpers"
 
 const card = (page: Page, name: string) =>
   page.getByRole("article", { name: `Raport ${name}` })
@@ -195,11 +195,11 @@ test("auditor findings: rules, evidence, filters and targets", async ({ page }) 
 
   await page.getByRole("radio", { name: "Możliwości" }).click()
   await expect(list.getByRole("article")).toHaveCount(5)
-  await page.getByRole("radio", { name: "Słowa kluczowe" }).click()
+  await page.getByLabel("Obszar").selectOption({ label: "Słowa kluczowe" })
   await expect(list.getByRole("article")).toHaveCount(3)
 
   // A CPA goal of 15 makes "Buty – Search" (CPA 20) no longer a budget candidate.
-  await page.getByRole("radio", { name: "Kampanie" }).click()
+  await page.getByLabel("Obszar").selectOption({ label: "Kampanie" })
   await expect(list.getByRole("article", { name: /: Buty – Search$/ })).toHaveCount(1)
   await page.getByRole("button", { name: "Cele (opcjonalnie)" }).click()
   await page.getByLabel("Docelowy CPA").fill("15")
@@ -207,5 +207,68 @@ test("auditor findings: rules, evidence, filters and targets", async ({ page }) 
 
   await page.getByRole("button", { name: "Jak liczymy" }).click()
   await expect(page.getByText(/test dwumianowy liczby konwersji/).first()).toBeVisible()
+  expect(errors).toEqual([])
+})
+
+test("auditor search terms, devices, locations and hours", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, [
+    "kampanie-audyt.csv",
+    "hasla-audyt.csv",
+    "urzadzenia-audyt.csv",
+    "lokalizacje-audyt.csv",
+    "godziny-audyt.csv",
+  ])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+  await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+
+  await page.getByRole("tab", { name: "Wyszukiwane hasła" }).click()
+  await page.getByLabel("Słowa opisujące ofertę").fill("buty, obuwie, nike, asics")
+  const table = page.getByRole("region", { name: "Wyszukiwane hasła z decyzjami" })
+  const row = (term: string) => table.getByRole("row").filter({ hasText: term })
+  await expect(row("buty sportowe tanie")).toContainText("Sugestia: wyklucz")
+  await expect(row("praca sklep obuwniczy")).toContainText("Obserwuj (mała próba)")
+  await expect(row("kurtka zimowa damska")).toContainText("Niepowiązana")
+  await expect(row("nike pegasus 41 rozmiar 42")).toContainText("Sugestia: nowe słowo")
+  await expectAccessible(page)
+
+  // Nothing is exported until the user decides.
+  await expect(
+    page.getByRole("button", { name: "Wykluczenia: pobierz TXT" })
+  ).toBeDisabled()
+  await page.getByRole("button", { name: /Oznacz sugerowane wykluczenia/ }).click()
+  await page
+    .getByLabel("Decyzja: praca sklep obuwniczy")
+    .selectOption({ label: "Wyklucz" })
+  await page
+    .getByLabel("Dopasowanie: praca sklep obuwniczy")
+    .selectOption({ label: "Do wyrażenia" })
+  await page
+    .getByLabel("Decyzja: nike pegasus 41 rozmiar 42")
+    .selectOption({ label: "Dodaj jako słowo kluczowe" })
+  const exclusions = await downloadFrom(page, "Wykluczenia: pobierz TXT")
+  expect(exclusions.body.toString("utf8")).toBe(
+    '[buty sportowe tanie]\r\n"praca sklep obuwniczy"'
+  )
+  const keywords = await downloadFrom(page, "Nowe słowa kluczowe: pobierz TXT")
+  expect(keywords.body.toString("utf8")).toBe("[nike pegasus 41 rozmiar 42]")
+
+  await page.getByRole("tab", { name: "Urządzenia" }).click()
+  await expect(
+    page.getByRole("article", { name: "Urządzenie z wysokim CPA: Telefony" })
+  ).toBeVisible()
+  await page.getByRole("tab", { name: "Lokalizacje" }).click()
+  await expect(
+    page.getByRole("article", { name: "Lokalizacja z wysokim CPA: Kraków" })
+  ).toBeVisible()
+  await page.getByRole("tab", { name: "Godziny i dni" }).click()
+  await expect(page.getByRole("img", { name: "Wykres: CPA" })).toBeVisible()
+  await expect(
+    page.getByRole("article", { name: /Godziny z najlepszymi wynikami: 18:00–18:59/ })
+  ).toBeVisible()
+  await expectAccessible(page)
   expect(errors).toEqual([])
 })
