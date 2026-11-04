@@ -115,11 +115,16 @@ export function declaredZipSize(bytes: Uint8Array): number | null {
   let offset = view.getUint32(eocd + 16, true)
   let total = 0
   for (let n = 0; n < entries; n++) {
-    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) return null
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50)
+      return null
     const size = view.getUint32(offset + 24, true)
     if (size === 0xffffffff) return null
     total += size
-    offset += 46 + view.getUint16(offset + 28, true) + view.getUint16(offset + 30, true) + view.getUint16(offset + 32, true)
+    offset +=
+      46 +
+      view.getUint16(offset + 28, true) +
+      view.getUint16(offset + 30, true) +
+      view.getUint16(offset + 32, true)
   }
   return total
 }
@@ -127,9 +132,13 @@ export function declaredZipSize(bytes: Uint8Array): number | null {
 export async function parseXlsx(bytes: Uint8Array): Promise<SheetTable> {
   const declared = declaredZipSize(bytes)
   if (declared === null)
-    throw new ImportError("Plik XLSX ma nieprawidłową strukturę. Wyeksportuj raport ponownie.")
+    throw new ImportError(
+      "Plik XLSX ma nieprawidłową strukturę. Wyeksportuj raport ponownie."
+    )
   if (declared > MAX_XLSX_UNCOMPRESSED)
-    throw new ImportError("Plik XLSX po rozpakowaniu przekracza 400 MB. Zawęź zakres raportu w Google Ads.")
+    throw new ImportError(
+      "Plik XLSX po rozpakowaniu przekracza 400 MB. Zawęź zakres raportu w Google Ads."
+    )
   // Loaded only when an XLSX file is imported.
   const { readSheet } = await import("read-excel-file/universal")
   let sheet

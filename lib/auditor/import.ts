@@ -239,7 +239,9 @@ export function analyzeReport(
   if (!type)
     issues.push({
       severity: "error",
-      message: "Nie rozpoznano typu raportu. Wybierz go z listy albo przypisz kolumny.",
+      message: isChartExport(mapping)
+        ? "To eksport wykresu (tylko data i jeden wskaźnik), a nie tabeli. W Google Ads pobierz raport ikoną „Pobierz” w pasku nad tabelą kampanii (obok „Raporty”), a nie przy wykresie."
+        : "Nie rozpoznano typu raportu. Wybierz go z listy albo przypisz kolumny.",
     })
   if (missingRequired.length)
     issues.push({
@@ -272,6 +274,19 @@ export function analyzeReport(
     missingUseful,
     issues,
   }
+}
+
+/**
+ * The chart above Google Ads tables downloads as "Data,<one metric>": no campaign, no other
+ * metrics. Recognised so the user gets told where the right download button is.
+ */
+export function isChartExport(mapping: Mapping): boolean {
+  const fields = Object.keys(mapping) as Field[]
+  return (
+    mapping.date !== undefined &&
+    fields.length <= 3 &&
+    fields.every((f) => FIELDS[f].kind === "time" || FIELDS[f].kind === "metric")
+  )
 }
 
 export function plural(n: number, one: string, few: string, many: string): string {

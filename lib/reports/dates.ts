@@ -45,7 +45,11 @@ const monthOf = (word: string) =>
   MONTHS[word.toLowerCase().slice(0, 3)] ?? MONTHS[word.toLowerCase()]
 
 export function parseReportDate(cell: string): string | null {
-  const text = cell.trim().replace(/\.$/, "")
+  // Polish exports may prefix the weekday: "śr., 28 paź 2026".
+  const text = cell
+    .trim()
+    .replace(/^[a-ząćęłńóśźż]{2,5}\.,\s*/i, "")
+    .replace(/\.$/, "")
   let m = text.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})$/)
   if (m) return iso(+m[1], +m[2], +m[3])
   m = text.match(/^(\d{1,2})[.\-/](\d{1,2})[.\-/](\d{4})$/)

@@ -235,3 +235,22 @@ describe("plural", () => {
     ).toEqual(["wiersz", "wiersze", "wierszy", "wierszy", "wiersze", "wierszy"])
   })
 })
+
+describe("chart exports", () => {
+  it("the chart download (date + one metric) gets a hint where the table download is", async () => {
+    const text = [
+      "Data,Wyśw.",
+      '"śr., 28 paź 2026",20 658',
+      '"czw., 29 paź 2026",19 006',
+    ].join("\n")
+    const table = await parseSheet(new TextEncoder().encode(text))
+    const analysis = analyzeReport(table, { fileName: "Wykres_z_serią_czasową.csv" })
+    expect(analysis.type).toBeNull()
+    expect(analysis.issues[0].message).toContain("To eksport wykresu")
+    expect(analysis.period).toEqual({
+      from: "2026-10-28",
+      to: "2026-10-29",
+      source: "kolumna",
+    })
+  })
+})
