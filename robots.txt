@@ -1,0 +1,4 @@
+User-Agent: *
+Allow: /
+
+Sitemap: https://borkowskiprzemo098.github.io/ads-toolkit/sitemap.xml
