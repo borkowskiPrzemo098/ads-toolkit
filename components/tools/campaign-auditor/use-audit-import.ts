@@ -119,7 +119,11 @@ export function useAuditImport() {
       }))
   }
 
-  const ready = views.filter((v) => v.status === "ready" && v.analysis)
+  // Stable between renders, so the dataset built from it is not rebuilt on every render.
+  const ready = useMemo(
+    () => views.filter((v) => v.status === "ready" && v.analysis),
+    [views]
+  )
   const canConfirm =
     ready.length > 0 &&
     views.every((v) => v.status !== "parsing") &&

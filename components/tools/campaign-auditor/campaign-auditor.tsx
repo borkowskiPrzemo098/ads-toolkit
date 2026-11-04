@@ -1,15 +1,16 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowRight, CircleCheck, RotateCcw, ShieldCheck } from "lucide-react"
-import { Panel } from "@/components/layout/panel"
+import { useMemo, useState } from "react"
+import { ArrowRight, RotateCcw, ShieldCheck } from "lucide-react"
 import { ToolHeader } from "@/components/layout/tool-header"
 import { Button } from "@/components/ui/button"
 import { TOOL_BY_SLUG } from "@/constants/tools"
-import { REPORT_TYPES } from "@/lib/auditor/detect"
-import { blockingIssues, recordCount } from "@/lib/auditor/import"
+import { blockingIssues } from "@/lib/auditor/import"
+import { buildDataset } from "@/lib/auditor/join"
+import { normalizeReport } from "@/lib/auditor/normalize"
 import { formatNumber } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { DataCheck } from "./data-check"
 import { ImportSummary } from "./import-summary"
 import { ReportCard } from "./report-card"
 import { ReportDropzone } from "./report-dropzone"
@@ -21,7 +22,7 @@ type Step = "files" | "summary" | "confirmed"
 const STEPS: { id: Step | "audit"; label: string }[] = [
   { id: "files", label: "Raporty i kolumny" },
   { id: "summary", label: "Podsumowanie" },
-  { id: "confirmed", label: "Dane zatwierdzone" },
+  { id: "confirmed", label: "Kontrola danych" },
   { id: "audit", label: "Audyt" },
 ]
 
@@ -34,6 +35,19 @@ export function CampaignAuditor() {
     window.scrollTo({ top: 0 })
   }
   const hasFiles = audit.files.length > 0
+  // The normalised, joined layer is built once the user confirms the import.
+  const confirmed = step === "confirmed"
+  const dataset = useMemo(
+    () =>
+      confirmed
+        ? buildDataset(
+            audit.ready.map((f) =>
+              normalizeReport(f.id, f.name, f.table!, f.analysis!, f.skipDuplicates)
+            )
+          )
+        : null,
+    [confirmed, audit.ready]
+  )
   const blocked = audit.files.filter(
     (f) =>
       f.status === "error" ||
@@ -149,31 +163,8 @@ export function CampaignAuditor() {
         />
       )}
 
-      {step === "confirmed" && (
-        <Panel title="Dane zatwierdzone">
-          <ul className="flex flex-col gap-2">
-            {audit.ready.map((f) => (
-              <li key={f.id} className="flex items-center gap-2 text-sm">
-                <CircleCheck
-                  className="size-4 shrink-0 text-success"
-                  aria-hidden="true"
-                />
-                <span className="font-medium break-all">{f.name}</span>
-                <span className="text-muted-foreground">
-                  {REPORT_TYPES[f.analysis!.type!].label},{" "}
-                  {formatNumber(recordCount(f.analysis!, f.skipDuplicates))} rekordów
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-            Dashboard, reguły audytu i rekomendacje powstają w kolejnych etapach budowy
-            tego narzędzia. Import jest gotowy do ich podłączenia.
-          </p>
-          <Button variant="outline" className="mt-4" onClick={() => setStep("files")}>
-            Wróć do raportów
-          </Button>
-        </Panel>
+      {step === "confirmed" && dataset && (
+        <DataCheck data={dataset} onBack={() => setStep("files")} />
       )}
     </>
   )

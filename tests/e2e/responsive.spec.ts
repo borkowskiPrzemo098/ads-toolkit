@@ -177,6 +177,16 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
         .click()
     },
   ],
+  [
+    "audyt kampanii – kontrola danych",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, VALID_REPORTS)
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await expect(page.getByRole("heading", { name: "Sumy konta" })).toBeVisible()
+    },
+  ],
 ]
 
 const format = (issues: LayoutIssue[]) => issues.map((i) => `${i.kind}: ${i.detail}`)

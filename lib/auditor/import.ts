@@ -57,7 +57,8 @@ export function parseCellNumber(
   return parseReportNumber(cell)
 }
 
-const isNoData = (cell: string) => cell === "" || /^(--|-|n\/a|brak)$/i.test(cell.trim())
+export const isNoData = (cell: string) =>
+  cell === "" || /^(--|-|n\/a|brak)$/i.test(cell.trim())
 
 /**
  * The header is the first of the top rows that names at least two known fields including a

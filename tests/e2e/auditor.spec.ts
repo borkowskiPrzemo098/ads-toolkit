@@ -1,6 +1,6 @@
 import { expect, test, type Page } from "@playwright/test"
 import { uploadReports, VALID_REPORTS } from "./auditor-fixtures"
-import { expectAccessible, watchErrors } from "./helpers"
+import { expectAccessible, nbsp, watchErrors } from "./helpers"
 
 const card = (page: Page, name: string) =>
   page.getByRole("article", { name: `Raport ${name}` })
@@ -60,8 +60,23 @@ test("auditor import: ten report types, summary and confirmation", async ({ page
   await expectAccessible(page)
 
   await page.getByRole("button", { name: "Zatwierdź dane" }).click()
-  await expect(page.getByRole("heading", { name: "Dane zatwierdzone" })).toBeVisible()
-  await expect(page.getByText("Kampanie, 4 rekordów")).toBeVisible()
+  // Data check: totals from the campaign report only, every report reconciled against them.
+  await expect(page.getByRole("heading", { name: "Sumy konta" })).toBeVisible()
+  await expect(page.getByText(/Z raportu „kampanie-pl.csv” \(kampanie\)/)).toBeVisible()
+  const totals = page.locator("dl").first()
+  await expect(totals.getByText(nbsp("6448,00 zł"))).toBeVisible()
+  await expect(totals.getByText(nbsp("174 610"))).toBeVisible()
+  const row = (name: string) =>
+    page
+      .getByRole("region", { name: "Zgodność raportów z sumami konta" })
+      .getByRole("row")
+      .filter({ hasText: name })
+  await expect(row("kampanie-pl.csv")).toContainText("Źródło sum")
+  await expect(row("urzadzenia.xlsx")).toContainText("Zgodny")
+  await expect(row("urzadzenia.xlsx")).toContainText("Obejmuje 1 z 4 kampanii")
+  await expect(row("search-terms-en.csv")).toContainText("Część konta")
+  await expect(page.getByRole("heading", { name: "Kampanie (4)" })).toBeVisible()
+  await expectAccessible(page)
   expect(errors).toEqual([])
 })
 

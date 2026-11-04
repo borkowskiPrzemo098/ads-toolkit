@@ -9,6 +9,7 @@ export const FIELDS = {
   // Identifiers, most reliable first (used for joining reports).
   customerId: { label: "Identyfikator klienta", kind: "id" },
   account: { label: "Konto", kind: "dimension" },
+  currency: { label: "Waluta", kind: "dimension" },
   campaignId: { label: "Identyfikator kampanii", kind: "id" },
   campaign: { label: "Kampania", kind: "dimension" },
   campaignType: { label: "Typ kampanii", kind: "dimension" },
@@ -73,6 +74,7 @@ export function normalizeHeader(header: string): string {
 const HEADERS: Record<Field, string[]> = {
   customerId: ["customer id", "identyfikator klienta", "id klienta"],
   account: ["account", "account name", "konto", "nazwa konta"],
+  currency: ["currency", "currency code", "waluta", "kod waluty"],
   campaignId: ["campaign id", "identyfikator kampanii", "id kampanii"],
   campaign: ["campaign", "campaign name", "kampania", "nazwa kampanii"],
   campaignType: ["campaign type", "typ kampanii", "advertising channel type"],

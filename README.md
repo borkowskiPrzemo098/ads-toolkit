@@ -189,7 +189,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | ---- | --------------------------------------------------------- | ------------ |
 | 1    | Analiza projektu i plan                                   | gotowy       |
 | 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy       |
-| 3    | Normalizacja i łączenie danych                            | do zrobienia |
+| 3    | Normalizacja i łączenie danych                            | gotowy       |
 | 4    | Dashboard KPI i wykresy                                   | do zrobienia |
 | 5    | Audyt kampanii i słów kluczowych                          | do zrobienia |
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | do zrobienia |
@@ -215,5 +215,24 @@ Import (`lib/auditor/`):
 - `summary.ts`: uwagi do zestawu (różne okresy, dwa raporty tego samego typu, z którego
   raportu liczone są sumy, łączenie bez identyfikatorów).
 - Mapowanie kolumn zapamiętywane w ramach audytu po sygnaturze nagłówka.
+
+Normalizacja i łączenie:
+
+- `normalize.ts`: warstwa znormalizowana obok surowych wierszy (te zostają bez zmian).
+  Urządzenia, typy dopasowania (z „wariantem bliskim”), stany kampanii, dni tygodnia i
+  godziny PL/EN do wartości kanonicznych; ID tylko cyfry; każdy rekord pamięta wiersz pliku.
+  Pusta komórka lub „--” = 0, komórka niebędąca liczbą = brak (zgłoszona przy imporcie).
+  Waluta z kolumny waluty albo z symboli w kwotach; bez niej kwoty bez symbolu.
+- `join.ts`: sumy konta z jednego raportu najwyższego poziomu (kampanie > grupy > …,
+  potem najdłuższy okres). Kampanie łączone po ID; nazwa, która w którymkolwiek raporcie
+  ma jedno ID, pożycza to ID; nazwa z wieloma ID nie jest łączona. Każdy raport jest
+  porównany z sumami: w obrębie kampanii, które obejmuje (np. urządzenia dla 1 z 4
+  kampanii) albo z całym kontem. Wyższa suma = ostrzeżenie; niższa = znane powody
+  (próg prywatności haseł, kampanie bez słów kluczowych). Ostrzeżenia: kampanie spoza
+  raportu sum, różne konta, różne waluty, inny okres.
+- `metrics.ts`: wzory KPI wspólne z Raportami PPC (`lib/reports/aggregate.ts`).
+- Ekran „Kontrola danych” po zatwierdzeniu importu: sumy konta i ich źródło, zgodność
+  raportów, kampanie i sposób łączenia. 200 000 wierszy: import ok. 2 s, normalizacja i
+  łączenie ok. 2 s.
 - Pliki testowe: `tests/fixtures/auditor/` (generator `generate.py`, wymaga `openpyxl`).
   200 000 wierszy (26 MB) wczytuje się w ok. 2 s.
