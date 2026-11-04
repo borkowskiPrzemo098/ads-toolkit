@@ -182,21 +182,22 @@ tests/e2e/              testy Playwright (smoke na 4 silnikach, scenariusze narz
 
 ## Audyt kampanii (Campaign Auditor)
 
-Moduł w budowie pod `/tools/campaign-auditor` (ukryty w menu, panelu i mapie strony do
-czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
+Dziewiąte narzędzie, `/tools/campaign-auditor`: pierwsze w menu, szeroki kafel na panelu.
+Flaga `hidden` w `constants/tools.ts` pozwala budować kolejne narzędzia etapami bez
+pokazywania ich w menu, panelu i mapie strony.
 
-| Etap | Zakres                                                    | Status       |
-| ---- | --------------------------------------------------------- | ------------ |
-| 1    | Analiza projektu i plan                                   | gotowy       |
-| 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy       |
-| 3    | Normalizacja i łączenie danych                            | gotowy       |
-| 4    | Dashboard KPI i wykresy                                   | gotowy       |
-| 5    | Audyt kampanii i słów kluczowych                          | gotowy       |
-| 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy       |
-| 7    | Rekomendacje i indeks efektywności                        | gotowy       |
-| 8    | Rentowność i porównanie okresów                           | gotowy       |
-| 9    | Raport PDF i plan działań                                 | gotowy       |
-| 10   | Testy, wydajność, bezpieczeństwo, regresja                | do zrobienia |
+| Etap | Zakres                                                    | Status |
+| ---- | --------------------------------------------------------- | ------ |
+| 1    | Analiza projektu i plan                                   | gotowy |
+| 2    | Import CSV/XLSX, rozpoznawanie raportów, mapowanie kolumn | gotowy |
+| 3    | Normalizacja i łączenie danych                            | gotowy |
+| 4    | Dashboard KPI i wykresy                                   | gotowy |
+| 5    | Audyt kampanii i słów kluczowych                          | gotowy |
+| 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy |
+| 7    | Rekomendacje i indeks efektywności                        | gotowy |
+| 8    | Rentowność i porównanie okresów                           | gotowy |
+| 9    | Raport PDF i plan działań                                 | gotowy |
+| 10   | Testy, wydajność, bezpieczeństwo, regresja                | gotowy |
 
 Import (`lib/auditor/`):
 
@@ -333,3 +334,16 @@ Plan działań, PDF, CSV (`action-plan.ts`, `export.ts`, `lib/pdf/audit-report.t
 - CSV: wykrycia z rekomendacjami (grupa, ważność, pewność, dowody, przyczyna, działanie,
   źródło), plan działań ze statusami, dane kampanii z przeliczonymi KPI.
 - Odczyt logo wspólny z Raportami PPC: `lib/pdf/logo.ts`.
+
+Etap 10 (kontrola końcowa):
+
+- Wydajność: cechy hasła niezależne od słów oferty liczone raz (cache), agregacja haseł
+  zapamiętywana per zbiór danych, przeliczanie audytu na wartościach odroczonych
+  (`useDeferredValue`). 200 000 haseł: pierwszy audyt ok. 7 s, zmiana słów oferty lub celów
+  ok. 0,5 s.
+- Bezpieczeństwo: XLSX sprawdzany przed rozpakowaniem (suma rozmiarów z katalogu ZIP,
+  limit 400 MB, odrzucany ZIP64 i uszkodzone archiwa), `npm audit --omit=dev`: 0
+  podatności, brak `innerHTML`/`eval`/zapytań sieciowych i zapisu danych w pamięci
+  przeglądarki w module audytu, CSV z ochroną przed formułami.
+- Testy brzegowe (`tests/unit/auditor-edge.test.ts`): bomba ZIP (`bomba.xlsx`), zera,
+  puste komórki, ujemne korekty kosztu, różne okresy, 50 000 haseł w całym procesie.

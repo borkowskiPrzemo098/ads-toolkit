@@ -23,9 +23,9 @@ export default function DashboardPage() {
             Policz kampanię, zanim wydasz kolejną złotówkę.
           </h1>
           <p className="mt-4 max-w-lg text-base leading-relaxed text-muted-foreground">
-            Osiem narzędzi dla osób, które prowadzą Google Ads: od progu rentowności,
-            przez listy słów kluczowych, po raport dla klienta. Bez logowania i bez
-            podłączania konta reklamowego.
+            Dziewięć narzędzi dla osób, które prowadzą Google Ads: od audytu konta i progu
+            rentowności, przez listy słów kluczowych, po raport dla klienta. Bez logowania
+            i bez podłączania konta reklamowego.
           </p>
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
@@ -63,7 +63,11 @@ export default function DashboardPage() {
         </div>
         <div className="grid gap-4 lg:grid-cols-2">
           {featured.map((tool) => (
-            <FeaturedToolTile key={tool.slug} tool={tool} />
+            <FeaturedToolTile
+              key={tool.slug}
+              tool={tool}
+              wide={tool.slug === "campaign-auditor"}
+            />
           ))}
         </div>
         <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

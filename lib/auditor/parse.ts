@@ -92,7 +92,44 @@ function cellText(value: unknown): string {
   return String(value).trim()
 }
 
+/** Uncompressed size an XLSX may expand to; real Google Ads exports stay far below. */
+export const MAX_XLSX_UNCOMPRESSED = 400 * 1024 * 1024
+
+/**
+ * Sum of uncompressed sizes declared in the ZIP central directory, read before anything is
+ * inflated. Returns null when the archive structure cannot be read (or uses ZIP64).
+ * Guards against "zip bombs": a small file that would expand to gigabytes in memory.
+ */
+export function declaredZipSize(bytes: Uint8Array): number | null {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+  // End of central directory: signature 0x06054b50, within the last 64 KB + 22 bytes.
+  let eocd = -1
+  for (let i = bytes.length - 22; i >= Math.max(0, bytes.length - 65_557); i--) {
+    if (view.getUint32(i, true) === 0x06054b50) {
+      eocd = i
+      break
+    }
+  }
+  if (eocd < 0) return null
+  const entries = view.getUint16(eocd + 10, true)
+  let offset = view.getUint32(eocd + 16, true)
+  let total = 0
+  for (let n = 0; n < entries; n++) {
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) return null
+    const size = view.getUint32(offset + 24, true)
+    if (size === 0xffffffff) return null
+    total += size
+    offset += 46 + view.getUint16(offset + 28, true) + view.getUint16(offset + 30, true) + view.getUint16(offset + 32, true)
+  }
+  return total
+}
+
 export async function parseXlsx(bytes: Uint8Array): Promise<SheetTable> {
+  const declared = declaredZipSize(bytes)
+  if (declared === null)
+    throw new ImportError("Plik XLSX ma nieprawidłową strukturę. Wyeksportuj raport ponownie.")
+  if (declared > MAX_XLSX_UNCOMPRESSED)
+    throw new ImportError("Plik XLSX po rozpakowaniu przekracza 400 MB. Zawęź zakres raportu w Google Ads.")
   // Loaded only when an XLSX file is imported.
   const { readSheet } = await import("read-excel-file/universal")
   let sheet

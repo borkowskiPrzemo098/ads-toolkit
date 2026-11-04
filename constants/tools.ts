@@ -14,6 +14,21 @@ import type { ToolMeta, ToolSlug } from "@/types/tool"
 /** Single source of truth for tool names, order, routes and dashboard copy. */
 export const ALL_TOOLS: ToolMeta[] = [
   {
+    slug: "campaign-auditor",
+    name: "Audyt kampanii",
+    description:
+      "Audyt konta z eksportów Google Ads: problemy, nieefektywne wydatki i plan działań.",
+    question: "Gdzie konto traci budżet i co poprawić najpierw?",
+    icon: ScanSearch,
+    hue: "#C6F35C",
+    featured: true,
+    outputs: [
+      "Import wielu raportów CSV i XLSX naraz",
+      "Wykrywanie problemów z dowodami liczbowymi",
+      "Rekomendacje, plan działań i raport PDF",
+    ],
+  },
+  {
     slug: "profitability",
     name: "Rentowność kampanii",
     description:
@@ -129,29 +144,13 @@ export const ALL_TOOLS: ToolMeta[] = [
       "Podgląd i eksport PDF oraz CSV",
     ],
   },
-  {
-    slug: "campaign-auditor",
-    name: "Audyt kampanii",
-    description:
-      "Audyt konta z eksportów Google Ads: problemy, nieefektywne wydatki i plan działań.",
-    question: "Gdzie konto traci budżet i co poprawić najpierw?",
-    icon: ScanSearch,
-    hue: "#C6F35C",
-    outputs: [
-      "Import wielu raportów CSV i XLSX naraz",
-      "Wykrywanie problemów z dowodami liczbowymi",
-      "Rekomendacje, plan działań i raport PDF",
-    ],
-    hidden: true,
-  },
 ]
 
 /** Tools shown in navigation, on the dashboard and in the sitemap. */
 export const TOOLS = ALL_TOOLS.filter((t) => !t.hidden)
 
-export const TOOL_BY_SLUG = Object.fromEntries(ALL_TOOLS.map((t) => [t.slug, t])) as Record<
-  ToolSlug,
-  ToolMeta
->
+export const TOOL_BY_SLUG = Object.fromEntries(
+  ALL_TOOLS.map((t) => [t.slug, t])
+) as Record<ToolSlug, ToolMeta>
 
 export const toolHref = (slug: ToolSlug) => `/tools/${slug}`

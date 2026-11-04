@@ -19,7 +19,7 @@ export default function Page() {
     >
       <DocSection title="1. Czym jest serwis">
         <p>
-          Ads Toolkit to bezpłatny zestaw ośmiu narzędzi pomocniczych dla osób
+          Ads Toolkit to bezpłatny zestaw dziewięciu narzędzi pomocniczych dla osób
           prowadzących kampanie Google Ads: kalkulatory, generatory i raporty. Działa w
           przeglądarce, bez rejestracji i bez połączenia z kontem reklamowym. Zasady
           przetwarzania danych opisuje{" "}

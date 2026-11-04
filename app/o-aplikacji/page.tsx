@@ -8,7 +8,7 @@ import { TOOLS, toolHref } from "@/constants/tools"
 export const metadata: Metadata = {
   title: "O aplikacji",
   description:
-    "Czym jest Ads Toolkit, jak liczy i czego nie robi: osiem narzędzi Google Ads działających lokalnie w przeglądarce.",
+    "Czym jest Ads Toolkit, jak liczy i czego nie robi: dziewięć narzędzi Google Ads działających lokalnie w przeglądarce.",
   alternates: { canonical: pageUrl("/o-aplikacji") },
 }
 
@@ -18,7 +18,7 @@ export default function Page() {
       title="O aplikacji"
       lead="Ads Toolkit zbiera w jednym miejscu rachunki i porządki, które przy kampaniach Google Ads zwykle robi się w arkuszu: rentowność, budżet, listy słów, linki, reklamy, testy i raport dla klienta."
     >
-      <DocSection title="Osiem narzędzi">
+      <DocSection title="Dziewięć narzędzi">
         <ul className="list-none! gap-0! pl-0!">
           {TOOLS.map((tool) => (
             <li

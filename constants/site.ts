@@ -15,7 +15,7 @@ export const pageUrl = (path: string) => `${SITE_URL}${path === "/" ? "/" : `${p
 export const LEGAL_UPDATED = "3 listopada 2026"
 
 export const SITE_DESCRIPTION =
-  "Osiem darmowych narzędzi do kampanii Google Ads: rentowność, budżet, słowa kluczowe, wykluczenia, UTM, reklamy RSA, testy A/B i raporty PPC. Bez logowania, dane zostają w przeglądarce."
+  "Dziewięć darmowych narzędzi do kampanii Google Ads: audyt konta z raportów, rentowność, budżet, słowa kluczowe, wykluczenia, UTM, reklamy RSA, testy A/B i raporty PPC. Bez logowania, dane zostają w przeglądarce."
 
 /** Information pages, in footer order. */
 export const INFO_PAGES = [

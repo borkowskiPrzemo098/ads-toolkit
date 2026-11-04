@@ -2,7 +2,7 @@
 
 # Ads Toolkit: zasady pracy
 
-Specyfikacja produktu: 8 narzędzi Google Ads, UI po polsku, Premium Dark, bez logowania,
+Specyfikacja produktu: 9 narzędzi Google Ads (8 + audyt kampanii), UI po polsku, Premium Dark, bez logowania,
 bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README → Status etapów).
 
 ## Obowiązkowe
@@ -46,7 +46,10 @@ bez API, bez bazy danych, dane przetwarzane lokalnie. Pracuj etapami (README →
 - Nowy typ raportu lub nagłówek: `columns.ts` + `detect.ts` + plik w
   `tests/fixtures/auditor/generate.py` + test w `tests/unit/auditor-import.test.ts`.
 - Dane raportów tylko w pamięci karty. Bez zapisu w storage bez zgody użytkownika.
-- Przed odsłonięciem w menu: usuń `hidden: true` w `constants/tools.ts` i `noindex` ze strony.
+- Nowe narzędzie budowane etapami: `hidden: true` w `constants/tools.ts` i `robots: { index: false }`
+  na stronie, usunięte przy odsłonięciu.
+- XLSX: zawsze przez `parseSheet` (limit rozmiaru po rozpakowaniu). Klasyfikacja haseł
+  przez `classifyTerm` (cache cech); nie licz intencji w komponentach.
 
 ## Design system
 

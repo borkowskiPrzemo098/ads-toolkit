@@ -297,6 +297,14 @@ write_csv(
     ],
 )
 
+# 19. "Zip bomb": a tiny XLSX-shaped archive that would expand to ~420 MB of zeros.
+import zipfile
+with zipfile.ZipFile(OUT / "bomba.xlsx", "w", zipfile.ZIP_DEFLATED, compresslevel=9) as z:
+    with z.open("xl/worksheets/sheet1.xml", "w", force_zip64=False) as f:
+        chunk = bytes(1024 * 1024)
+        for _ in range(420):
+            f.write(chunk)
+
 # Broken files: missing required cost column, a non-number, a negative click count.
 write_csv(
     "brak-kosztu.csv",

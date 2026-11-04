@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useDeferredValue, useMemo, useState } from "react"
 import {
   ChevronDown,
   Lightbulb,
@@ -82,16 +82,25 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
     competitors: "",
   })
   const [decisions, setDecisions] = useState<Decisions>({})
+  // Typing stays responsive: the audit reruns on the deferred values, after a pause.
+  const deferredInputs = useDeferredValue(inputs)
   const intent = useMemo(
-    () => intentContext(inputs.offer, inputs.brands, inputs.competitors),
-    [inputs]
+    () =>
+      intentContext(
+        deferredInputs.offer,
+        deferredInputs.brands,
+        deferredInputs.competitors
+      ),
+    [deferredInputs]
   )
+  const deferredCpa = useDeferredValue(cpa)
+  const deferredRoas = useDeferredValue(roas)
 
   const targets = useMemo(() => {
-    const c = parseDecimal(cpa)
-    const r = parseDecimal(roas)
+    const c = parseDecimal(deferredCpa)
+    const r = parseDecimal(deferredRoas)
     return { cpa: c && c > 0 ? c : null, roas: r && r > 0 ? r : null }
-  }, [cpa, roas])
+  }, [deferredCpa, deferredRoas])
   const result = useMemo(() => runAudit(data, targets, intent), [data, targets, intent])
   const [profitForm, setProfitForm] = useState<ProfitForm>({
     aov: "",

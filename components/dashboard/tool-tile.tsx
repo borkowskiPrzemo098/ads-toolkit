@@ -28,9 +28,13 @@ function OpenLink({ tool }: { tool: ToolMeta }) {
   )
 }
 
-export function FeaturedToolTile({ tool }: { tool: ToolMeta }) {
+/** `wide` spans both columns: the flagship tool (campaign auditor) leads the grid. */
+export function FeaturedToolTile({ tool, wide }: { tool: ToolMeta; wide?: boolean }) {
   return (
-    <article className={cn(TILE, "p-6 sm:p-7")} style={hueStyle(tool)}>
+    <article
+      className={cn(TILE, "p-6 sm:p-7", wide && "lg:col-span-2")}
+      style={hueStyle(tool)}
+    >
       {/* Corner pool of the tool's colour: featured tiles carry the most light. */}
       <div
         aria-hidden="true"
@@ -46,7 +50,12 @@ export function FeaturedToolTile({ tool }: { tool: ToolMeta }) {
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         {tool.description}
       </p>
-      <ul className="mt-5 flex flex-col gap-2 border-t border-border pt-5">
+      <ul
+        className={cn(
+          "mt-5 flex flex-col gap-2 border-t border-border pt-5",
+          wide && "lg:grid lg:grid-cols-3 lg:gap-4"
+        )}
+      >
         {tool.outputs.slice(0, 3).map((item) => (
           <li key={item} className="flex items-start gap-2.5 text-sm text-[#c9cfdb]">
             <Check className="mt-0.5 size-4 shrink-0 text-(--tool)" aria-hidden="true" />

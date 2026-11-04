@@ -9,8 +9,6 @@ export const metadata: Metadata = {
   title: tool.name,
   description: tool.description,
   alternates: { canonical: pageUrl("/tools/campaign-auditor") },
-  // Built in stages: not indexed until it is listed in the navigation.
-  robots: { index: false },
 }
 
 export default function Page() {
