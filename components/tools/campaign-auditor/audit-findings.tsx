@@ -29,11 +29,20 @@ import type { AuditDataset } from "@/lib/auditor/join"
 import { METHOD_NOTES } from "@/lib/auditor/thresholds"
 import { formatNumber, parseDecimal } from "@/lib/formatting/number"
 import { cn } from "@/lib/utils"
+import { EfficiencyIndexPanel } from "./efficiency-index-panel"
+import { RecommendationsPanel } from "./recommendations-panel"
 import { SearchTermsPanel, type IntentInputs } from "./search-terms-panel"
 import { SchedulePanel, SegmentPanel } from "./segment-panel"
 
 type AreaFilter = "all" | FindingArea
-type Tab = "findings" | "searchTerms" | "devices" | "locations" | "schedule"
+type Tab =
+  | "recommendations"
+  | "index"
+  | "findings"
+  | "searchTerms"
+  | "devices"
+  | "locations"
+  | "schedule"
 type KindFilter = "all" | "problem" | "opportunity" | "data"
 
 const SEVERITY_STYLE: Record<Severity, string> = {
@@ -54,7 +63,7 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
   const [kind, setKind] = useState<KindFilter>("all")
   const [targetsOpen, setTargetsOpen] = useState(false)
   const [methodOpen, setMethodOpen] = useState(false)
-  const [tab, setTab] = useState<Tab>("findings")
+  const [tab, setTab] = useState<Tab>("recommendations")
   const [inputs, setInputs] = useState<IntentInputs>({
     offer: "",
     brands: "",
@@ -74,6 +83,8 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
   const result = useMemo(() => runAudit(data, targets, intent), [data, targets, intent])
   const areas = [...new Set(result.findings.map((f) => f.area))]
   const tabs: { id: Tab; label: string }[] = [
+    { id: "recommendations", label: "Rekomendacje" },
+    { id: "index", label: "Indeks efektywności" },
     { id: "findings", label: "Wykrycia" },
     ...(result.searchTerms
       ? [{ id: "searchTerms" as const, label: "Wyszukiwane hasła" }]
@@ -158,6 +169,11 @@ export function AuditFindings({ data }: { data: AuditDataset }) {
           </div>
         </div>
       )}
+
+      {tab === "recommendations" && (
+        <RecommendationsPanel groups={result.recommendations} />
+      )}
+      {tab === "index" && <EfficiencyIndexPanel index={result.index} />}
 
       {tab === "searchTerms" && result.searchTerms && (
         <>

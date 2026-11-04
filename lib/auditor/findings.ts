@@ -7,7 +7,7 @@
 export type Severity = "critical" | "high" | "medium" | "low" | "info"
 export type Confidence = "high" | "medium" | "low"
 export type FindingArea =
-  "campaign" | "keyword" | "searchTerm" | "device" | "location" | "schedule"
+  "campaign" | "keyword" | "searchTerm" | "device" | "location" | "schedule" | "ad"
 
 export const AREA_LABEL: Record<FindingArea, string> = {
   campaign: "Kampanie",
@@ -16,6 +16,7 @@ export const AREA_LABEL: Record<FindingArea, string> = {
   device: "Urządzenia",
   location: "Lokalizacje",
   schedule: "Godziny i dni",
+  ad: "Reklamy",
 }
 /** Problem to fix, or an opportunity to use. */
 export type FindingKind = "problem" | "opportunity" | "data"

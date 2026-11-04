@@ -1,6 +1,9 @@
 import { sortFindings, type Finding } from "./findings"
 import { intentContext, type IntentContext } from "./intent"
 import type { AuditDataset } from "./join"
+import { efficiencyIndex, type EfficiencyIndex } from "./efficiency-index"
+import { groupRecommendations } from "./recommendations"
+import { adRules } from "./rules/ads"
 import { campaignRules } from "./rules/campaigns"
 import { makeContext, type AuditTargets } from "./rules/context"
 import { keywordRules } from "./rules/keywords"
@@ -22,6 +25,8 @@ export interface AuditResult {
   devices: SegmentAnalysis | null
   locations: SegmentAnalysis | null
   schedule: ScheduleAnalysis | null
+  index: EfficiencyIndex
+  recommendations: ReturnType<typeof groupRecommendations>
 }
 
 export const NO_INTENT_CONTEXT: IntentContext = intentContext("", "", "")
@@ -37,6 +42,7 @@ export function runAudit(
   const devices = analyzeSegment(ctx, "device")
   const locations = analyzeSegment(ctx, "location")
   const schedule = analyzeSchedule(ctx)
+  const ads = adRules(ctx)
   const parts = [
     campaignRules(ctx),
     keywordRules(ctx),
@@ -44,13 +50,17 @@ export function runAudit(
     devices?.result ?? { findings: [], notes: [] },
     locations?.result ?? { findings: [], notes: [] },
     schedule?.result ?? { findings: [], notes: [] },
+    ads ?? { findings: [], notes: [] },
   ]
+  const findings = sortFindings(parts.flatMap((p) => p.findings))
   return {
-    findings: sortFindings(parts.flatMap((p) => p.findings)),
+    findings,
     notes: parts.flatMap((p) => p.notes),
     searchTerms,
     devices,
     locations,
     schedule,
+    index: efficiencyIndex({ ctx, findings, searchTerms, devices, locations, ads }),
+    recommendations: groupRecommendations(findings),
   }
 }

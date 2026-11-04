@@ -177,6 +177,7 @@ test("auditor findings: rules, evidence, filters and targets", async ({ page }) 
   await page.getByRole("button", { name: "Zatwierdź dane" }).click()
   await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
   await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+  await page.getByRole("tab", { name: "Wykrycia" }).click()
 
   const list = page.getByRole("list", { name: "Wyniki audytu" })
   const first = list.getByRole("article").first()
@@ -269,6 +270,37 @@ test("auditor search terms, devices, locations and hours", async ({ page }) => {
   await expect(
     page.getByRole("article", { name: /Godziny z najlepszymi wynikami: 18:00–18:59/ })
   ).toBeVisible()
+  await expectAccessible(page)
+  expect(errors).toEqual([])
+})
+
+test("auditor recommendations and efficiency index", async ({ page }) => {
+  const errors = watchErrors(page)
+  await page.goto("./tools/campaign-auditor/")
+  await uploadReports(page, ["kampanie-audyt.csv", "slowa-kluczowe-audyt.csv"])
+  await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+  await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+  await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+  await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+
+  // Recommendations are the default view.
+  const urgent = page.getByRole("region", {
+    name: "Problemy wymagające natychmiastowej uwagi",
+  })
+  await expect(urgent.getByRole("article")).toHaveCount(4)
+  const rec = page.getByRole("article", {
+    name: "Wysoki koszt przy małej liczbie konwersji: Kurtki – Search",
+  })
+  for (const label of ["PROBLEM", "DOWÓD", "INTERPRETACJA", "DZIAŁANIE"])
+    await expect(rec).toContainText(label)
+  await expect(rec).toContainText("Priorytet: Wysoki")
+  await expectAccessible(page)
+
+  await page.getByRole("tab", { name: "Indeks efektywności" }).click()
+  await expect(page.getByText("48", { exact: true })).toBeVisible()
+  await expect(page.getByText("3 z 7")).toBeVisible()
+  await expect(page.getByText(/nie oficjalna ocena Google/)).toBeVisible()
+  await expect(page.getByText("Brak raportu urządzeń z konwersjami.")).toBeVisible()
   await expectAccessible(page)
   expect(errors).toEqual([])
 })

@@ -211,6 +211,7 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await page.getByRole("button", { name: "Zatwierdź dane" }).click()
       await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
       await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("tab", { name: "Wykrycia" }).click()
       await page.getByRole("button", { name: "Cele (opcjonalnie)" }).click()
       await page.getByRole("button", { name: "Jak liczymy" }).click()
     },
@@ -248,6 +249,22 @@ const PAGES: [name: string, path: string, setup?: Setup][] = [
       await page.getByRole("button", { name: "Przejdź do audytu" }).click()
       await page.getByRole("tab", { name: "Godziny i dni" }).click()
       await expect(page.getByRole("img", { name: "Wykres: CPA" })).toBeVisible()
+    },
+  ],
+  [
+    "audyt kampanii – indeks",
+    "./tools/campaign-auditor/",
+    async (page) => {
+      await uploadReports(page, [
+        "kampanie-audyt.csv",
+        "slowa-kluczowe-audyt.csv",
+        "reklamy-en.xlsx",
+      ])
+      await page.getByRole("button", { name: "Przejdź do podsumowania" }).click()
+      await page.getByRole("button", { name: "Zatwierdź dane" }).click()
+      await page.getByRole("button", { name: "Przejdź do dashboardu" }).click()
+      await page.getByRole("button", { name: "Przejdź do audytu" }).click()
+      await page.getByRole("tab", { name: "Indeks efektywności" }).click()
     },
   ],
 ]

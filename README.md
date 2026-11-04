@@ -193,7 +193,7 @@ czasu ukończenia: `hidden: true` w `constants/tools.ts`, strona ma `noindex`).
 | 4    | Dashboard KPI i wykresy                                   | gotowy       |
 | 5    | Audyt kampanii i słów kluczowych                          | gotowy       |
 | 6    | Wyszukiwane hasła, urządzenia, lokalizacje, godziny       | gotowy       |
-| 7    | Rekomendacje i indeks efektywności                        | do zrobienia |
+| 7    | Rekomendacje i indeks efektywności                        | gotowy       |
 | 8    | Rentowność i porównanie okresów                           | do zrobienia |
 | 9    | Raport PDF i plan działań                                 | do zrobienia |
 | 10   | Testy, wydajność, bezpieczeństwo, regresja                | do zrobienia |
@@ -294,3 +294,17 @@ Wyszukiwane hasła, urządzenia, lokalizacje, godziny (`intent.ts`, `rules/searc
   krótszym niż 4 tygodnie wnioski oznaczone jako wstępne.
 - Fixtures: `hasla-audyt.csv`, `urzadzenia-audyt.csv`, `lokalizacje-audyt.csv`,
   `godziny-audyt.csv`.
+
+Rekomendacje, indeks, reklamy (`recommendations.ts`, `efficiency-index.ts`, `rules/ads.ts`):
+
+- Każde wykrycie jest rekomendacją w jednej z 7 grup (natychmiastowa uwaga, koszty,
+  konwersja, wartość, nowe słowa, wykluczenia, monitorowanie) w formacie problem →
+  dowód → interpretacja → działanie, z priorytetem i pewnością. Problemy wysokiej
+  ważności trafiają zawsze do „natychmiastowej uwagi”. Widok domyślny kroku „Audyt”.
+- Indeks efektywności kampanii 0–100 (nie ocena Google): obszar = 100 × (1 − udział
+  kosztu w elementach z wykrytymi problemami); 7 obszarów (kampanie, słowa, jakość ruchu,
+  urządzenia, lokalizacje, reklamy, kontrola kosztów). Obszary bez danych nie są oceniane
+  ani liczone; wynik ogólny to średnia ocenionych, z kompletnością (np. 5 z 7).
+- Reklamy: niska ocena skuteczności (Ad Strength), reklama konwertująca słabiej niż inne
+  w tej samej grupie, bardzo niski CTR. Pojedyncze nagłówki RSA nie są oceniane (eksport
+  podaje wyniki całej reklamy).
